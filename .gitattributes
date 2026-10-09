@@ -1,0 +1,7 @@
+*.png binary
+*.gif binary
+*.ttf binary
+*.ico binary
+*.sig binary
+# el decodificador es un archivo generado: que no cuente en las estadísticas de lenguajes ni ensucie los diffs
+encapsulados.html linguist-generated=true

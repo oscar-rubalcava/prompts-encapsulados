@@ -1,0 +1,4 @@
+cryptography>=42
+pillow>=10
+fonttools==4.62.1        # fija: el texto del logo se convierte en curvas y debe dar el mismo resultado en el CI
+playwright>=1.45

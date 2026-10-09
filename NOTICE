@@ -1,0 +1,14 @@
+Prompts Encapsulados
+Copyright 2026 Oscar Leonardo Rubalcava Mireles
+
+Este producto se distribuye bajo la licencia Apache-2.0 (ver LICENSE).
+
+La licencia Apache-2.0 no concede permiso para usar el nombre "Prompts Encapsulados", su logotipo
+ni su identidad visual (Sección 6 de la licencia). Ver marca/LEEME.md.
+
+Componentes de terceros incluidos:
+  - IBM Plex Mono. Copyright 2017 IBM Corp., con el nombre reservado "Plex".
+    Licencia SIL Open Font License 1.1 (fonts/IBMPlexMono-OFL.txt).
+    Se distribuye sin modificar.
+
+Dependencias de Python (no incluidas; consulta sus licencias): cryptography, Pillow.

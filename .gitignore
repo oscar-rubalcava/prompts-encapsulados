@@ -1,0 +1,22 @@
+# ============ CLAVES PRIVADAS: NUNCA AL REPOSITORIO ============
+*.pcid
+*.key
+# ===============================================================
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Construcciones
+_site/
+dist/
+*.zip
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

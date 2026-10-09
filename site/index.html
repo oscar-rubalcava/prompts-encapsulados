@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{NOMBRE}} · Prompts que se pueden verificar</title>
+<meta name="description" content="Guarda un prompt en una etiqueta PNG: comprimido, cifrado, firmado por su autor y fácil de encontrar. Sin servidor y sin cuenta. Formato abierto.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{NOMBRE}} · Prompts que se pueden verificar">
+<meta property="og:description" content="Prompts en una etiqueta PNG: firmados, cifrados y fáciles de encontrar. Sin servidor. Formato abierto.">
+<meta property="og:image" content="https://{{USUARIO}}.github.io/{{SLUG}}/assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<style>
+  @font-face{font-family:"IBM Plex Mono";font-weight:400;src:url(assets/fonts/IBMPlexMono-Regular.ttf) format("truetype")}
+  @font-face{font-family:"IBM Plex Mono";font-weight:700;src:url(assets/fonts/IBMPlexMono-Bold.ttf) format("truetype")}
+  :root{--bg:#0E1319;--panel:#151C25;--line:#2A3542;--ink:#E6EDF5;--muted:#9AA8B8;--good:#6FD39B;--warn:#E8B84A;--bad:#FF8A80;
+        --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;--sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  *{box-sizing:border-box} html{scroll-behavior:smooth;background:var(--bg)}
+  body{margin:0;font:17px/1.6 var(--sans);color:var(--ink)}
+  a{color:var(--ink)} .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  header{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none} .brand img{width:38px;height:38px}
+  .brand b{font:700 21px var(--mono)} nav{display:flex;gap:18px;flex:1;flex-wrap:wrap} nav a{color:var(--muted);text-decoration:none;font-size:15px} nav a:hover{color:var(--ink)}
+  .lang{font:700 13px var(--mono);border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 12px;border-radius:6px;cursor:pointer}
+  h1{font:700 clamp(34px,6vw,58px)/1.08 var(--mono);letter-spacing:-.02em;margin:0 0 18px}
+  h2{font:700 28px/1.2 var(--mono);letter-spacing:-.01em;margin:0 0 10px} h3{font:700 16px var(--mono);margin:0 0 6px}
+  .hero{display:grid;gap:34px;padding:56px 0 40px;align-items:center;grid-template-columns:1fr}
+  @media(min-width:900px){.hero{grid-template-columns:1fr 1.15fr}}
+  .lead{color:var(--muted);font-size:19px;margin:0 0 26px;max-width:34em}
+  .btns{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{font:700 15px var(--mono);padding:13px 20px;border-radius:7px;text-decoration:none;border:1px solid var(--ink)}
+  .btn.p{background:var(--ink);color:#17202A} .btn.g{color:var(--ink)} .btn:hover{filter:brightness(.9)}
+  .shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)} .shot img{display:block;width:100%;height:auto}
+  section{padding:46px 0;border-top:1px solid var(--line)} .sub{color:var(--muted);margin:0 0 26px;max-width:44em}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px} .card p{margin:0;color:var(--muted);font-size:15px}
+  pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto;font:14px/1.6 var(--mono);margin:12px 0 0}
+  .step{display:flex;gap:14px} .num{font:700 15px var(--mono);border:1px solid var(--line);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;flex:none}
+  .cards{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+  .dl{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-decoration:none;color:inherit} .dl:hover{border-color:#5A6B7E}
+  .dl img{width:100%;display:block;border-radius:6px} .dl b{display:block;font:700 14px var(--mono);margin:10px 0 2px} .dl span{font-size:14px;color:var(--muted)}
+  .honest li{margin:8px 0;color:var(--muted)} .honest b{color:var(--ink)} ul{padding-left:20px}
+  .tag{display:inline-block;font:700 12px var(--mono);border:1px solid var(--warn);color:var(--warn);border-radius:999px;padding:2px 10px;margin-bottom:14px}
+  footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--muted);font-size:14px;display:flex;gap:10px 26px;flex-wrap:wrap;justify-content:space-between}
+  .btn:focus-visible,a:focus-visible,.lang:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="#"><img src="assets/logo.svg" alt=""><b>{{NOMBRE_CORTO}}</b></a>
+    <nav aria-label="Principal">
+      <a href="app/" data-es="Demo" data-en="Demo">Demo</a>
+      <a href="#como" data-es="Cómo funciona" data-en="How it works">Cómo funciona</a>
+      <a href="#prueba" data-es="Pruébalo" data-en="Try it">Pruébalo</a>
+      <a href="#seguridad" data-es="Seguridad" data-en="Security">Seguridad</a>
+      <a href="https://github.com/{{USUARIO}}/{{SLUG}}" rel="noopener">GitHub</a>
+    </nav>
+    <button class="lang" id="lang" aria-label="English / Español">EN</button>
+  </header>
+
+  <div class="hero">
+    <div>
+      <span class="tag" data-es="Beta · sin auditoría externa" data-en="Beta · no external audit">Beta · sin auditoría externa</span>
+      <h1 data-es="Prompts que se pueden verificar." data-en="Prompts you can verify.">Prompts que se pueden verificar.</h1>
+      <p class="lead" data-es="Guarda un prompt en una etiqueta PNG: comprimido, cifrado con contraseña, firmado por su autor y fácil de encontrar en tu biblioteca. Sin servidor y sin cuenta." data-en="Store a prompt in a PNG label: compressed, password-encrypted, signed by its author and easy to find in your library. No server, no account.">Guarda un prompt en una etiqueta PNG: comprimido, cifrado con contraseña, firmado por su autor y fácil de encontrar en tu biblioteca. Sin servidor y sin cuenta.</p>
+      <div class="btns">
+        <a class="btn p" href="app/" data-es="Probar la demo" data-en="Try the demo">Probar la demo</a>
+        <a class="btn g" href="https://github.com/{{USUARIO}}/{{SLUG}}" rel="noopener" data-es="Ver en GitHub" data-en="View on GitHub">Ver en GitHub</a>
+      </div>
+    </div>
+    <div class="shot"><img src="assets/demo.gif" alt="Demostración: abrir una tarjeta, verificar su firma, rellenar variables, revisar riesgos y usar la biblioteca" width="880" height="602"></div>
+  </div>
+
+  <section id="problema">
+    <h2 data-es="El problema" data-en="The problem">El problema</h2>
+    <p class="sub" data-es="Hoy los prompts circulan como texto suelto en chats y documentos." data-en="Today prompts travel as loose text in chats and documents.">Hoy los prompts circulan como texto suelto en chats y documentos.</p>
+    <div class="grid">
+      <div class="card"><h3 data-es="¿Quién lo hizo?" data-en="Who made it?">¿Quién lo hizo?</h3><p data-es="Nada prueba el autor. Cualquiera puede decir que es tuyo." data-en="Nothing proves the author. Anyone can claim it is yours.">Nada prueba el autor. Cualquiera puede decir que es tuyo.</p></div>
+      <div class="card"><h3 data-es="¿Lo cambiaron?" data-en="Was it changed?">¿Lo cambiaron?</h3><p data-es="Una palabra alterada puede cambiar todo, y no se nota." data-en="One altered word can change everything, unnoticed.">Una palabra alterada puede cambiar todo, y no se nota.</p></div>
+      <div class="card"><h3 data-es="¿Qué esconde?" data-en="What does it hide?">¿Qué esconde?</h3><p data-es="Puede traer instrucciones peligrosas o caracteres invisibles." data-en="It may carry dangerous instructions or invisible characters.">Puede traer instrucciones peligrosas o caracteres invisibles.</p></div>
+      <div class="card"><h3 data-es="¿Dónde estaba?" data-en="Where was it?">¿Dónde estaba?</h3><p data-es="Nadie encuentra el prompt bueno entre cientos de archivos." data-en="No one finds the good prompt among hundreds of files.">Nadie encuentra el prompt bueno entre cientos de archivos.</p></div>
+    </div>
+  </section>
+
+  <section id="como">
+    <h2 data-es="Cómo funciona" data-en="How it works">Cómo funciona</h2>
+    <div class="grid">
+      <div class="step"><div class="num">1</div><div><h3 data-es="Creas" data-en="Create">Creas</h3><p class="sub" style="margin:0" data-es="Un comando convierte tu prompt en una etiqueta PNG firmada, con su emblema y color propios." data-en="One command turns your prompt into a signed PNG label with its own emblem and color.">Un comando convierte tu prompt en una etiqueta PNG firmada, con su emblema y color propios.</p></div></div>
+      <div class="step"><div class="num">2</div><div><h3 data-es="Compartes" data-en="Share">Compartes</h3><p class="sub" style="margin:0" data-es="Es un archivo: por correo o mensajería, como documento. Puede ir cifrado con contraseña." data-en="It is a file: send it by email or messaging as a document. It can be password-encrypted.">Es un archivo: por correo o mensajería, como documento. Puede ir cifrado con contraseña.</p></div></div>
+      <div class="step"><div class="num">3</div><div><h3 data-es="Verificas" data-en="Verify">Verificas</h3><p class="sub" style="margin:0" data-es="Quien la recibe la arrastra al decodificador: ve quién la firmó, si la tocaron y qué riesgos trae." data-en="The receiver drags it into the decoder: sees who signed it, whether it was tampered with and what risks it carries.">Quien la recibe la arrastra al decodificador: ve quién la firmó, si la tocaron y qué riesgos trae.</p></div></div>
+    </div>
+    <pre>pip install cryptography pillow
+python3 {{CORTO}}.py keygen MiMarca --color "#FBB43F"
+python3 {{CORTO}}.py encode mi_prompt.json --sign mimarca.pcid --category Ventas -o tarjetas/</pre>
+  </section>
+
+  <section id="prueba">
+    <h2 data-es="Pruébalo en 30 segundos" data-en="Try it in 30 seconds">Pruébalo en 30 segundos</h2>
+    <p class="sub" data-es="Descarga una tarjeta y arrástrala a la demo. Importa demo_appqia.pub para ver cómo pasa de «autor desconocido» a «de confianza». La tarjeta cifrada usa la contraseña demo1234." data-en="Download a card and drag it into the demo. Import demo_appqia.pub to see it go from “unknown author” to “trusted”. The encrypted card uses the password demo1234.">Descarga una tarjeta y arrástrala a la demo. Importa demo_appqia.pub para ver cómo pasa de «autor desconocido» a «de confianza». La tarjeta cifrada usa la contraseña demo1234.</p>
+    <div class="cards">
+      <a class="dl" href="ejemplos/asistente-de-punto-de-venta_v1.0.{{EXTENSION}}.png" download><img src="ejemplos/asistente-de-punto-de-venta_v1.0.{{EXTENSION}}.png" alt="Tarjeta: Asistente de punto de venta" loading="lazy"><b data-es="Firmada" data-en="Signed">Firmada</b><span data-es="Con variables para rellenar." data-en="With variables to fill in.">Con variables para rellenar.</span></a>
+      <a class="dl" href="ejemplos/respuesta-a-reclamos_v1.0.{{EXTENSION}}.png" download><img src="ejemplos/respuesta-a-reclamos_v1.0.{{EXTENSION}}.png" alt="Tarjeta cifrada: Respuesta a reclamos" loading="lazy"><b data-es="Cifrada" data-en="Encrypted">Cifrada</b><span data-es="Su título se ve; el contenido pide contraseña." data-en="Its title is visible; the content asks for a password.">Su título se ve; el contenido pide contraseña.</span></a>
+      <a class="dl" href="ejemplos/resumen-de-correos-ejemplo-con-riesgos_v1.0.{{EXTENSION}}.png" download><img src="ejemplos/resumen-de-correos-ejemplo-con-riesgos_v1.0.{{EXTENSION}}.png" alt="Tarjeta con riesgos" loading="lazy"><b data-es="Con riesgos" data-en="With risks">Con riesgos</b><span data-es="Texto oculto e instrucciones peligrosas: mira cómo lo señala." data-en="Hidden text and dangerous instructions: see how it flags them.">Texto oculto e instrucciones peligrosas: mira cómo lo señala.</span></a>
+      <a class="dl" href="ejemplos/actualizacion-de-precios_v1.0.{{EXTENSION}}.png" download><img src="ejemplos/actualizacion-de-precios_v1.0.{{EXTENSION}}.png" alt="Tarjeta con apariencia imitada" loading="lazy"><b data-es="Imitación" data-en="Imitation">Imitación</b><span data-es="Copia el aspecto de otro autor con otra clave." data-en="Copies another author's look with a different key.">Copia el aspecto de otro autor con otra clave.</span></a>
+    </div>
+    <p style="margin-top:18px"><a href="ejemplos/demo_appqia.pub" download data-es="Descargar demo_appqia.pub (clave pública de la demo)" data-en="Download demo_appqia.pub (demo public key)">Descargar demo_appqia.pub (clave pública de la demo)</a></p>
+  </section>
+
+  <section id="caracteristicas">
+    <h2 data-es="Qué incluye" data-en="What is included">Qué incluye</h2>
+    <div class="grid">
+      <div class="card"><h3 data-es="Firma verificable" data-en="Verifiable signature">Firma verificable</h3><p data-es="Ed25519 sobre todo el contenido y los datos públicos." data-en="Ed25519 over all content and public data.">Ed25519 sobre todo el contenido y los datos públicos.</p></div>
+      <div class="card"><h3 data-es="Cifrado" data-en="Encryption">Cifrado</h3><p data-es="AES-256-GCM con PBKDF2 (600 000 iteraciones)." data-en="AES-256-GCM with PBKDF2 (600,000 iterations).">AES-256-GCM con PBKDF2 (600 000 iteraciones).</p></div>
+      <div class="card"><h3 data-es="Biblioteca" data-en="Library">Biblioteca</h3><p data-es="Busca, filtra por categoría y ve cuánto ocupa. Guardado local opcional." data-en="Search, filter by category and see how much space it uses. Optional local storage.">Busca, filtra por categoría y ve cuánto ocupa. Guardado local opcional.</p></div>
+      <div class="card"><h3 data-es="Revisión de riesgos" data-en="Risk review">Revisión de riesgos</h3><p data-es="Muestra el texto oculto y marca órdenes sospechosas." data-en="Reveals hidden text and flags suspicious instructions.">Muestra el texto oculto y marca órdenes sospechosas.</p></div>
+      <div class="card"><h3 data-es="Detecta imitaciones" data-en="Detects imitations">Detecta imitaciones</h3><p data-es="Comprueba que el aspecto corresponde a la clave que firmó." data-en="Checks that the look matches the key that signed.">Comprueba que el aspecto corresponde a la clave que firmó.</p></div>
+      <div class="card"><h3 data-es="Sin red" data-en="No network">Sin red</h3><p data-es="El decodificador no puede conectarse a ninguna dirección." data-en="The decoder cannot connect to any address.">El decodificador no puede conectarse a ninguna dirección.</p></div>
+      <div class="card"><h3 data-es="Lanzamientos firmados" data-en="Signed releases">Lanzamientos firmados</h3><p data-es="Verificables incluso con solo OpenSSL." data-en="Verifiable even with just OpenSSL.">Verificables incluso con solo OpenSSL.</p></div>
+      <div class="card"><h3 data-es="Formato abierto" data-en="Open format">Formato abierto</h3><p data-es="Especificación completa para escribir tu propio lector." data-en="Full specification so you can write your own reader.">Especificación completa para escribir tu propio lector.</p></div>
+    </div>
+  </section>
+
+  <section id="seguridad">
+    <h2 data-es="Seguridad, con honestidad" data-en="Security, honestly">Seguridad, con honestidad</h2>
+    <ul class="honest">
+      <li data-es="Una tarjeta abierta se puede copiar: {{NOMBRE}} no lo impide. Detecta falsificaciones y avisa de riesgos." data-en="An opened card can be copied: the tool does not prevent it. It detects forgeries and warns about risks.">Una tarjeta abierta se puede copiar: {{NOMBRE}} no lo impide. Detecta falsificaciones y avisa de riesgos.</li>
+      <li data-es="La firma prueba que nadie tocó la tarjeta, no quién es el dueño de la clave: hay que comparar la huella por otro canal." data-en="The signature proves nobody touched the card, not who owns the key: compare the fingerprint through another channel.">La firma prueba que nadie tocó la tarjeta, no quién es el dueño de la clave: hay que comparar la huella por otro canal.</li>
+      <li data-es="La revisión de riesgos es una heurística: puede fallar en ambos sentidos." data-en="The risk review is a heuristic: it can fail both ways.">La revisión de riesgos es una heurística: puede fallar en ambos sentidos.</li>
+      <li data-es="Es una beta y no ha sido auditada por terceros. Usa primitivas estándar, pero revísalo antes de confiarle algo crítico." data-en="It is a beta and has not been audited by third parties. It uses standard primitives, but review it before trusting it with anything critical.">Es una beta y no ha sido auditada por terceros. Usa primitivas estándar, pero revísalo antes de confiarle algo crítico.</li>
+    </ul>
+    <p><a href="https://github.com/{{USUARIO}}/{{SLUG}}/blob/main/docs/SEGURIDAD.md" rel="noopener" data-es="Leer el modelo de amenazas completo" data-en="Read the full threat model">Leer el modelo de amenazas completo</a></p>
+  </section>
+
+  <footer>
+    <span>{{NOMBRE}} · Apache-2.0 · <span data-es="Tipografía IBM Plex Mono (SIL OFL)" data-en="Typeface IBM Plex Mono (SIL OFL)">Tipografía IBM Plex Mono (SIL OFL)</span></span>
+    <span><span data-es="Creado por" data-en="Created by">Creado por</span> Oscar Rubalcava · AppqIA · <a href="https://www.linkedin.com/in/oscar-leonardo-rubalcava-0778a7415/" rel="noopener">LinkedIn</a> · <a href="https://github.com/{{USUARIO}}" rel="noopener">GitHub</a></span>
+  </footer>
+</div>
+<script>
+  (function () {
+    var btn = document.getElementById("lang"), cur = "es";
+    function apply(l) {
+      cur = l; document.documentElement.lang = l; btn.textContent = l === "es" ? "EN" : "ES";
+      document.querySelectorAll("[data-es]").forEach(function (el) { el.textContent = el.getAttribute("data-" + l); });
+      document.title = l === "es" ? "{{NOMBRE}} · Prompts que se pueden verificar" : "{{NOMBRE}} · Prompts you can verify";
+      try { localStorage.setItem("{{CORTO}}.site.lang", l); } catch (e) {}
+    }
+    btn.addEventListener("click", function () { apply(cur === "es" ? "en" : "es"); });
+    var saved = null; try { saved = localStorage.getItem("{{CORTO}}.site.lang"); } catch (e) {}
+    var pref = saved || ((navigator.language || "es").toLowerCase().indexOf("es") === 0 ? "es" : "en");
+    if (pref !== "es") apply(pref);
+  })();
+</script>
+</body>
+</html>

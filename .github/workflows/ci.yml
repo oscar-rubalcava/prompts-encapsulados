@@ -1,0 +1,57 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  formato:
+    name: Formato, firma y seguridad (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install cryptography pillow
+      - run: python tests/test_formato.py
+      - run: python tests/test_preparar.py
+
+  interfaz:
+    name: Decodificador y biblioteca (navegador real)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install cryptography pillow playwright
+      - run: playwright install --with-deps chromium
+      - run: python tests/test_interfaz.py
+
+  construccion:
+    name: encapsulados.html coincide con su plantilla
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install cryptography pillow fonttools==4.62.1
+      - run: python tools/build_html.py
+      - name: encapsulados.html no debe cambiar al reconstruirlo
+        run: git diff --exit-code encapsulados.html
+
+  renombrado:
+    name: El renombrado del proyecto funciona
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install cryptography pillow fonttools==4.62.1
+      - run: python tests/test_renombrado.py

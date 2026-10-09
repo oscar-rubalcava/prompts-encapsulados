@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; font-src data:; script-src 'sha256-{{SCRIPT_HASH}}'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{NOMBRE}}</title>
+<link rel="icon" href="data:image/svg+xml,{{FAVICON}}">
+<style>
+  @font-face{font-family:"IBM Plex Mono";font-weight:400;font-style:normal;src:url(data:font/ttf;base64,{{FONT_REGULAR}}) format("truetype")}
+  @font-face{font-family:"IBM Plex Mono";font-weight:700;font-style:normal;src:url(data:font/ttf;base64,{{FONT_BOLD}}) format("truetype")}
+  :root{
+    --bg:#0E1319; --panel:#151C25; --panel2:#1B2430; --line:#2A3542; --ink:#E6EDF5; --muted:#93A1B1;
+    --btn:#E6EDF5; --btn-ink:#17202A; --good:#6FD39B; --warn:#E8B84A; --bad:#FF8A80; --mark:rgba(230,237,245,.16);
+    --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{background:var(--bg)}
+  body{margin:0;font:16px/1.55 var(--sans);color:var(--ink);background:var(--bg)}
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 20px 64px}
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand svg{width:40px;height:40px;display:block}
+  .brand b{font:700 22px/1 var(--mono);letter-spacing:-.01em}
+  header p{margin:0;color:var(--muted);font-size:14px;flex:1;min-width:220px}
+  nav{display:flex;gap:6px}
+  nav button{font:700 13px var(--mono);padding:9px 14px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+  nav button[aria-selected="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+  nav button:focus-visible,button:focus-visible,.card:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  h2{font:700 24px/1.25 var(--mono);letter-spacing:-.01em;margin:0 0 4px}
+  h3{font:700 14px var(--mono);margin:0}
+  .grid{display:grid;gap:26px;grid-template-columns:1fr}
+  @media (min-width:900px){.grid{grid-template-columns:340px 1fr;align-items:start}.left{position:sticky;top:20px}}
+
+  /* tarjeta cargada */
+  .drop{border:1px dashed #3B4A5B;background:var(--panel);border-radius:10px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+  .drop:hover,.drop:focus-visible,.drop.over{border-color:var(--ink);outline:none;background:var(--panel2)}
+  .drop strong{display:block;font:700 16px var(--mono);margin-bottom:4px}
+  .drop span{color:var(--muted);font-size:14px}
+  .drop.has{padding:10px;border-style:solid;border-color:var(--line)}
+  #cardImg{display:none;width:100%;border-radius:6px}
+  .drop.has #cardImg{display:block} .drop.has .hint{display:none}
+  .swap{margin-top:8px;font-size:13px;color:var(--muted);display:none} .drop.has .swap{display:block}
+  .meta{margin:18px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+  .meta dt{color:var(--muted)} .meta dd{margin:0;overflow-wrap:anywhere}
+  .privacy{margin:16px 0 0;font-size:13px;color:var(--muted)}
+  .trust{margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+  .trust ul{list-style:none;margin:8px 0 10px;padding:0;display:grid;gap:8px}
+  .trust li{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:14px}
+  .trust li small{display:block;color:var(--muted);font:12px var(--mono)}
+  .trust .none{color:var(--muted);font-size:13px;margin:8px 0 10px}
+
+  /* controles */
+  label{display:block;font:700 13px var(--mono);margin-bottom:5px}
+  input[type=password],input[type=text],input[type=search],select{width:100%;font:15px var(--sans);padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+  input:focus-visible{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  button.p{font:700 14px var(--mono);padding:10px 16px;border-radius:6px;border:1px solid var(--btn);background:var(--btn);color:var(--btn-ink);cursor:pointer;white-space:nowrap}
+  button.g{font:700 14px var(--mono);padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
+  button.p:hover{filter:brightness(.92)} button.g:hover{border-color:var(--ink)}
+  button.link{border:0;background:none;color:var(--ink);padding:2px 4px;font:13px var(--sans);text-decoration:underline;cursor:pointer}
+  .err{color:var(--bad);font-size:14px;margin:10px 0 0;min-height:1.4em}
+  .empty{color:var(--muted);border-left:2px solid var(--line);padding:6px 0 6px 16px}
+  .empty p{margin:0 0 6px}
+  .desc{color:var(--muted);margin:0 0 20px}
+
+  /* estado de la firma */
+  .sig{border:1px solid var(--line);border-left-width:5px;background:var(--panel);border-radius:8px;padding:14px 18px;margin:0 0 24px}
+  .sig p{margin:0}
+  .sig .t{font:700 15px var(--mono)} .sig .d{font-size:14px;color:var(--muted);margin-top:5px}
+  .sig .fp{font:13px var(--mono);margin-top:8px;overflow-wrap:anywhere}
+  .sig.good{border-left-color:var(--good)} .sig.good .t{color:var(--good)}
+  .sig.warn{border-left-color:var(--warn)} .sig.warn .t{color:var(--warn)}
+  .sig.bad{border-left-color:var(--bad)} .sig.bad .t{color:var(--bad)}
+  .sig.none{border-left-color:#4A586A}
+  .sig .trustrow{margin-top:12px} .sig .note{margin-top:8px;font-size:14px;color:var(--warn)}
+
+  /* variables y salida */
+  .chip{display:inline-block;font:700 11px var(--mono);padding:2px 9px;border-radius:999px;color:#17202A;vertical-align:middle}
+  .vars{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:0 0 6px}
+  .vars-h{display:flex;justify-content:space-between;align-items:baseline;margin:22px 0 10px}
+  .count{font-size:13px;color:var(--muted)}
+  .blk{margin-top:22px} .blk-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  pre{margin:0;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;font:14px/1.65 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+  mark{background:var(--mark);color:var(--ink);border-radius:3px;padding:0 3px;box-shadow:inset 0 -1px 0 var(--ink)}
+  mark.empty-v{background:transparent;box-shadow:none;outline:1px dashed #7C8B9C;outline-offset:0}
+  .top-actions{display:flex;gap:10px;margin-top:22px;align-items:center;flex-wrap:wrap}
+  .ok{color:var(--muted);font-size:14px}
+
+  /* biblioteca */
+  .toolbar{display:grid;gap:12px;grid-template-columns:1fr;margin-bottom:14px}
+  @media (min-width:760px){.toolbar{grid-template-columns:1fr 220px auto}}
+  .cats{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+  .cats button{font:700 12px var(--mono);padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .cats button[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+  .cats i{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .libgrid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;display:block;text-align:left;color:inherit;font:inherit;width:100%}
+  .card:hover{border-color:#5A6B7E}
+  .card img{width:100%;display:block;border-radius:6px}
+  .card .ct{font:700 15px var(--mono);margin:10px 2px 4px;overflow-wrap:anywhere}
+  .card .cm{font-size:13px;color:var(--muted);margin:0 2px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .card .cs{font-size:13px;margin:6px 2px 2px}
+  .cs.good{color:var(--good)} .cs.warn{color:var(--warn)} .cs.bad{color:var(--bad)} .cs.none{color:var(--muted)}
+  .storage{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:12px 16px;margin:0 0 14px}
+  .storage .stline{margin:0;font:700 14px var(--mono)}
+  .persist{display:flex;align-items:center;gap:10px;margin:0;font:600 13px var(--sans);cursor:pointer}
+  .persist input{width:18px;height:18px;accent-color:var(--ink)}
+  .cw{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+  .cw .card{width:100%}
+  .libempty{border:1px dashed #3B4A5B;border-radius:10px;padding:40px 20px;text-align:center;color:var(--muted)}
+  .libempty strong{display:block;font:700 16px var(--mono);color:var(--ink);margin-bottom:6px}
+  .libnote{font-size:13px;color:var(--muted);margin:14px 0 0}
+  .safety{border:1px solid var(--line);border-left-width:5px;background:var(--panel);border-radius:8px;padding:14px 18px;margin:0 0 20px}
+  .safety .t{font:700 14px var(--mono);margin:0}
+  .safety p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+  .safety ul{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:14px}
+  .safety li{display:flex;gap:10px;align-items:flex-start}
+  .safety li b{font:700 11px var(--mono);padding:2px 8px;border-radius:999px;color:#17202A;flex:none;margin-top:2px}
+  .safety.bad{border-left-color:var(--bad)} .safety.bad .t{color:var(--bad)}
+  .safety.warn{border-left-color:var(--warn)} .safety.warn .t{color:var(--warn)}
+  .safety.good{border-left-color:var(--good)} .safety.good .t{color:var(--good)}
+  .sv-alta{background:var(--bad)} .sv-media{background:var(--warn)} .sv-baja{background:#93A1B1}
+  mark.hid{background:#4A1D22;color:#FFB4AB;outline:1px solid var(--bad);font-size:12px;border-radius:3px;box-shadow:none}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:space-between}
+  .foot a{color:var(--ink)}
+  [hidden]{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">{{LOGO}}<b>{{NOMBRE_CORTO}}</b></div>
+    <p>Abre una tarjeta, comprueba quién la firmó, rellena sus variables y cópiala.</p>
+    <nav role="tablist" aria-label="Secciones">
+      <button role="tab" id="tabOpen" aria-selected="true">Abrir</button>
+      <button role="tab" id="tabLib" aria-selected="false">Biblioteca <span id="libCount">(0)</span></button>
+    </nav>
+  </header>
+
+  <!-- ===================== ABRIR ===================== -->
+  <div id="viewOpen" class="grid">
+    <aside class="left">
+      <div class="drop" id="drop" tabindex="0" role="button" aria-label="Elegir o soltar una tarjeta PNG">
+        <div class="hint"><strong>Suelta la tarjeta aquí</strong><span>o haz clic para elegir el archivo PNG</span></div>
+        <img id="cardImg" alt="Tarjeta {{NOMBRE}} cargada">
+        <div class="swap">Cambiar tarjeta</div>
+      </div>
+      <input type="file" id="file" accept="image/png" hidden>
+      <dl class="meta" id="meta" hidden></dl>
+
+      <section class="trust" aria-labelledby="trustH">
+        <h3 id="trustH">Autores de confianza</h3>
+        <p class="none" id="trustNone">Ninguno todavía. Importa el archivo .pub que te dio el autor por un canal de confianza.</p>
+        <ul id="trustList"></ul>
+        <button class="g" id="importPub">Importar clave pública (.pub)</button>
+        <input type="file" id="pubFile" accept=".pub,.json,application/json" hidden>
+        <p class="err" id="trustErr" role="alert"></p>
+      </section>
+      <p class="privacy">Todo se lee en tu navegador. La tarjeta y la contraseña no se envían a ningún servidor.</p>
+    </aside>
+
+    <main id="work">
+      <div class="empty" id="empty">
+        <p>Aquí aparecerá el prompt.</p>
+        <p>Envía las tarjetas como <b>documento</b> (no como foto) en WhatsApp o correo; si la app las recomprime, se dañan.</p>
+      </div>
+
+      <section class="sig none" id="sig" role="status" hidden>
+        <p class="t" id="sigTitle"></p>
+        <p class="d" id="sigDesc"></p>
+        <p class="fp" id="sigFp"></p>
+        <p class="note" id="sigNote" hidden></p>
+        <div class="trustrow" id="trustRow" hidden>
+          <label for="trustName">Nombre para este autor</label>
+          <div class="row"><input type="text" id="trustName" autocomplete="off" placeholder="El nombre con que conoces a esta persona o empresa" style="flex:1;min-width:200px"><button class="p" id="trustSave">Confiar en este autor</button></div>
+        </div>
+        <div class="trustrow" id="forceRow" hidden><button class="g" id="forceOpen">Abrir de todos modos</button></div>
+      </section>
+
+      <section id="lock" hidden>
+        <h2>Esta tarjeta está cifrada</h2>
+        <p class="desc">Escribe la contraseña que te dio quien la creó.</p>
+        <label for="pw">Contraseña</label>
+        <div class="row"><input type="password" id="pw" autocomplete="off" style="flex:1;min-width:200px"><button class="p" id="unlock">Abrir</button></div>
+      </section>
+      <p class="err" id="err" role="alert"></p>
+
+      <section id="open" hidden>
+        <h2 id="title"></h2>
+        <p class="desc" id="desc"></p>
+        <section class="safety" id="safety" hidden aria-labelledby="safetyT">
+          <p class="t" id="safetyT"></p>
+          <p id="safetySum"></p>
+          <ul id="safetyList"></ul>
+        </section>
+        <div id="varsBox" hidden>
+          <div class="vars-h"><h3>Variables</h3><span class="count" id="count"></span></div>
+          <div class="vars" id="vars"></div>
+        </div>
+        <div class="top-actions"><button class="p" id="copyAll">Copiar todo</button><span class="ok" id="copied" role="status"></span></div>
+        <div class="blk" id="sysBlk" hidden>
+          <div class="blk-h"><h3>Mensaje de sistema</h3><button class="g" id="copySys">Copiar sistema</button></div>
+          <pre id="sysOut"></pre>
+        </div>
+        <div class="blk">
+          <div class="blk-h"><h3>Prompt</h3><button class="g" id="copyPrompt">Copiar prompt</button></div>
+          <pre id="promptOut"></pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== BIBLIOTECA ===================== -->
+  <div id="viewLib" hidden>
+    <div class="toolbar">
+      <div><label for="q" class="sr" style="position:absolute;left:-9999px">Buscar</label><input type="search" id="q" placeholder="Buscar por título, categoría, autor o etiqueta" autocomplete="off"></div>
+      <select id="stateSel" aria-label="Filtrar por estado de la firma">
+        <option value="all">Todas las firmas</option><option value="trusted">De autores de confianza</option>
+        <option value="valid">Firma válida, autor desconocido</option><option value="none">Sin firma</option><option value="invalid">Firma no válida</option>
+      </select>
+      <div class="row"><button class="p" id="addFiles">Añadir tarjetas</button><button class="g" id="addFolder">Añadir carpeta</button></div>
+    </div>
+    <input type="file" id="libFiles" accept="image/png" multiple hidden>
+    <input type="file" id="libFolder" webkitdirectory multiple hidden>
+    <div class="cats" id="cats" role="group" aria-label="Filtrar por categoría"></div>
+    <div class="storage">
+      <p class="stline" id="libStorage" role="status"></p>
+      <p class="count" id="libStorage2"></p>
+      <div class="row" style="align-items:center;margin-top:8px">
+        <label class="persist"><input type="checkbox" id="persistSw"><span>Guardar la biblioteca en este navegador</span></label>
+        <button class="g" id="clearLib" hidden title="Quita las tarjetas de la biblioteca (y de este navegador si lo tenías activado). No borra tus archivos originales.">Vaciar biblioteca</button>
+      </div>
+      <p class="err" id="persistNote" role="alert" style="color:var(--muted);min-height:0;margin:8px 0 0"></p>
+    </div>
+    <p class="count" id="libStatus" role="status"></p>
+    <div class="libgrid" id="libGrid"></div>
+    <div class="libempty" id="libEmpty"><strong>Tu biblioteca está vacía</strong>Arrastra aquí tarjetas PNG, o usa «Añadir tarjetas» / «Añadir carpeta». También funcionan las tarjetas cifradas: su título y categoría son públicos y se leen sin contraseña.</div>
+    <p class="libnote" id="libNote"></p>
+  </div>
+  <footer class="foot"><span>{{NOMBRE}} {{APP_VERSION}} · formato v4 · beta sin auditoría externa</span><a href="{{REPO_URL}}" target="_blank" rel="noopener noreferrer">Código, documentación y verificación de esta versión</a></footer>
+</div>
+
+<script type="text/plain" id="licencia-fuentes">{{LICENSE}}</script>
+<script>
+// ==CORE-START== (sin DOM: se puede probar en Node)
+const TOP = 74, BOT = 18, PADX = 6;                 // geometría de la etiqueta (formato v4)
+const MAGIC = {{MAGIC_BYTES}};             // "{{MAGIC}}"
+const SUPPORTED_VERSION = 4, SIG_TRAILER = 96, MAX_PUBLIC = 4096, MAX_ITER = 5_000_000;
+const VAR_RE = /\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}/g;
+const CAT_PALETTE = [0.60, 0.33, 0.75, 0.50, 0.00, 0.90, 0.17, 0.42];
+
+const CRC_TABLE = (() => { const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return t; })();
+function crc32(b){ let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC_TABLE[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+const toHex = b => Array.from(b, x => x.toString(16).padStart(2, "0")).join("");
+function fromHex(h){ if (!/^([0-9a-fA-F]{2})+$/.test(h)) throw new Error("hex no válido"); return Uint8Array.from(h.match(/../g), x => parseInt(x, 16)); }
+
+function rgbaToBytes(rgba, width, height){
+  const rows = height - TOP - BOT, dw = width - 2 * PADX;      // zona de datos: x en [PADX, W-PADX), y en [TOP, H-BOT)
+  if (rows <= 0 || dw <= 0) throw new Error("La imagen no tiene las proporciones de una etiqueta de {{NOMBRE}}.");
+  const out = new Uint8Array(rows * dw * 3); let o = 0;
+  for (let y = 0; y < rows; y++){
+    let s = ((TOP + y) * width + PADX) * 4;
+    for (let x = 0; x < dw; x++, s += 4){ out[o++] = rgba[s]; out[o++] = rgba[s+1]; out[o++] = rgba[s+2]; }
+  }
+  return out;
+}
+
+function parseHeader(b){
+  if (b.length < 16 || MAGIC.some((m, i) => b[i] !== m)) throw new Error("Este archivo no es una tarjeta de {{NOMBRE}} (o es de una versión anterior del formato).");
+  const dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  if (b[4] !== SUPPORTED_VERSION) throw new Error("Versión de formato no soportada (" + b[4] + ").");
+  const flags = b[5], encrypted = !!(flags & 1), signed = !!(flags & 2);
+  let pos = 6, salt, nonce, iters;
+  if (encrypted){ salt = b.slice(6, 22); nonce = b.slice(22, 34); iters = dv.getUint32(34); pos = 38; }
+  const publen = dv.getUint16(pos); pos += 2;
+  if (publen > MAX_PUBLIC || pos + publen + 4 > b.length) throw new Error("La tarjeta está dañada (bloque público incompleto).");
+  const pubBytes = b.slice(pos, pos + publen); pos += publen;
+  const length = dv.getUint32(pos); pos += 4;
+  const endPayload = pos + length, crcPos = endPayload + (signed ? SIG_TRAILER : 0);
+  if (crcPos + 4 > b.length) throw new Error("La tarjeta está dañada (datos incompletos).");
+  if (crc32(b.subarray(0, crcPos)) !== dv.getUint32(crcPos))
+    throw new Error("La tarjeta está dañada. Si llegó por WhatsApp como foto, pide que la envíen como documento.");
+  let meta; try { meta = JSON.parse(new TextDecoder().decode(pubBytes)); if (!meta || typeof meta !== "object" || Array.isArray(meta)) throw 0; }
+  catch { throw new Error("La tarjeta está dañada (bloque público ilegible)."); }
+  const h = { encrypted, signed, salt, nonce, iters, meta, head: b.slice(0, pos), body: b.slice(pos, endPayload), signedBytes: b.slice(0, endPayload) };
+  if (signed){ h.pub = b.slice(endPayload, endPayload + 32); h.sig = b.slice(endPayload + 32, endPayload + 96); }
+  return h;
+}
+
+async function fingerprintOf(pub){
+  const d = new Uint8Array(await crypto.subtle.digest("SHA-256", pub));
+  return toHex(d).toUpperCase().slice(0, 24).match(/.{4}/g).join("-");
+}
+// 'none' | 'valid' | 'invalid' | 'unsupported'
+async function verifySignature(h){
+  if (!h.signed) return "none";
+  try {
+    const key = await crypto.subtle.importKey("raw", h.pub, { name: "Ed25519" }, false, ["verify"]);
+    return (await crypto.subtle.verify({ name: "Ed25519" }, key, h.sig, h.signedBytes)) ? "valid" : "invalid";
+  } catch (e) { return (e && e.name === "NotSupportedError") ? "unsupported" : "invalid"; }
+}
+async function inflateRaw(bytes){
+  if (typeof DecompressionStream === "undefined") throw new Error("Tu navegador es antiguo: no puede descomprimir. Usa una versión reciente de Chrome, Edge, Firefox o Safari.");
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+async function decryptBody(h, password){
+  if (!(globalThis.crypto && crypto.subtle)) throw new Error("Este navegador bloquea el cifrado en esta página. Abre el archivo desde tu equipo (no dentro de otra app).");
+  if (h.iters < 1 || h.iters > MAX_ITER) throw new Error("Parámetros de cifrado no válidos.");
+  const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: h.salt, iterations: h.iters, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  try { return new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: h.nonce, additionalData: h.head }, key, h.body)); }
+  catch { throw new Error("Contraseña incorrecta, o la tarjeta fue modificada."); }
+}
+async function openCard(h, password){
+  let body = h.body;
+  if (h.encrypted){ if (!password) throw new Error("Falta la contraseña."); body = await decryptBody(h, password); }
+  return JSON.parse(new TextDecoder().decode(await inflateRaw(body)));
+}
+function findVars(...texts){ const seen = []; for (const t of texts) for (const m of (t || "").matchAll(VAR_RE)) if (!seen.includes(m[1])) seen.push(m[1]); return seen; }
+function fillVars(text, values){ return (text || "").replace(VAR_RE, (m, k) => (values[k] !== undefined && values[k] !== "") ? values[k] : m); }
+function catHue(meta){ if (typeof meta.cat_hue === "number") return meta.cat_hue; const c = String(meta.category || ""); return c ? CAT_PALETTE[crc32(new TextEncoder().encode(c)) % CAT_PALETTE.length] : null; }
+const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+/* ---- revisión de seguridad del texto (heurísticas: señalan lo que conviene leer con atención; NO es un antivirus) ---- */
+const HIDDEN_RE = /[\u{E0000}-\u{E007F}\u200B\u2060\uFEFF\u202A-\u202E\u2066-\u2069\u00AD]/gu;
+const TAGRUN_RE = /[\u{E0000}-\u{E007F}]+/gu;
+const stripHidden = t => String(t == null ? "" : t).replace(HIDDEN_RE, "");
+function decodeTags(t){ let o = ""; for (const ch of String(t)) { const c = ch.codePointAt(0); if (c >= 0xE0020 && c <= 0xE007E) o += String.fromCharCode(c - 0xE0000); } return o; }
+const SEV = { alta: 3, media: 2, baja: 1 };
+const PHRASES = [
+  ["alta", "Ordena ignorar instrucciones anteriores", /ignor\w* (todas? )?(las |tus |sus |the )?(instrucciones|reglas|indicaciones|instructions|rules) (anteriores|previas|previous|prior)|ignore (all |any )?(the )?(previous|prior|above) (instructions|rules)|olvida (todo|tus instrucciones)/g],
+  ["alta", "Pide ocultarle algo al usuario", /no (le )?(digas|menciones|informes|avises|reveles) (nada )?(al|a el|a la) (usuario|persona)|do not (tell|inform|mention)[^.]{0,30}user|sin que (el|la) usuari[oa] (lo )?sepa/g],
+  ["alta", "Pide revelar el mensaje de sistema", /(revela|muestra|imprime|repite|reveal|show|print|repeat)[^.]{0,30}(prompt|mensaje|instrucciones|instructions) (del |de |of the )?(sistema|interno|system)/g],
+  ["alta", "Pide enviar datos a una dirección externa", /(envia|manda|sube|publica|reenvia|post|send|upload|forward)[^.]{0,80}https?:\/\//g],
+  ["alta", "Pide enviar credenciales o secretos", /(envia|manda|comparte|send|share|forward)[^.]{0,50}(contrasena|password|token|api[ _-]?key|credencial|credential|clave privada|frase semilla|seed phrase)/g],
+  ["alta", "Contiene una orden que descarga y ejecuta código", /(curl|wget)\s+[^|\n]+\|\s*(sh|bash|zsh|python)|powershell[^.\n]{0,40}(-enc|downloadstring|iex)|base64 -d[^\n]*\|\s*(sh|bash)/g],
+  ["media", "Contiene comandos de terminal", /\b(rm -rf|sudo |chmod \+x|curl |wget |eval\(|exec\(|os\.system|subprocess)/g],
+  ["media", "Menciona contraseñas, tokens o claves", /(contrasena|password|token|api[ _-]?key|clave privada|frase semilla|seed phrase|credencial)/g],
+];
+function scanText(text){
+  text = String(text == null ? "" : text); const findings = [];
+  const hidden = text.match(HIDDEN_RE) || [];
+  if (hidden.length){ const dec = decodeTags(text);
+    findings.push({ sev: "alta", count: hidden.length, msg: `Contiene ${hidden.length} caracteres ocultos (no se ven al leer).` + (dec ? ` Texto oculto decodificado: «${dec.slice(0, 200)}»` : "") }); }
+  const n = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  for (const [sev, label, rx] of PHRASES){ const m = n.match(rx); if (m) findings.push({ sev, count: m.length, msg: label + "." }); }
+  const urls = text.match(/https?:\/\/[^\s)>\]"']+/g) || [];
+  if (urls.length){ const doms = [...new Set(urls.map(u => u.replace(/^https?:\/\//, "").split("/")[0].toLowerCase()))].sort();
+    findings.push({ sev: "media", count: urls.length, msg: `Contiene ${urls.length} enlace(s): ${doms.slice(0, 6).join(", ")}.` }); }
+  if (/[A-Za-z0-9+/=]{200,}/.test(text)) findings.push({ sev: "media", count: 1, msg: "Contiene un bloque largo codificado (base64 o similar) que no se puede leer a simple vista." });
+  if (/[\w.+-]+@[\w-]+\.[\w.-]+/.test(text)) findings.push({ sev: "baja", count: 1, msg: "Contiene direcciones de correo." });
+  findings.sort((a, b) => SEV[b.sev] - SEV[a.sev]);
+  return findings;
+}
+const maxSeverity = f => f.reduce((m, x) => (!m || SEV[x.sev] > SEV[m]) ? x.sev : m, "");
+
+/* ---- coherencia visual: la 'regla de huella' dibujada debe corresponder a la clave que firmó ---- */
+// 'match' | 'mismatch' | 'na' (sin firma o color de la regla indistinguible del fondo)
+async function visualStatus(rgba, width, h){
+  if (!h.signed) return "na";
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", h.pub));
+  const y = TOP - 2, base = TOP - 1, n = Math.floor((width - 2 * PADX) / 6);
+  const px = (x, yy) => { const o = (yy * width + x) * 4; return [rgba[o], rgba[o+1], rgba[o+2]]; };
+  const diff = (a, b) => Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]);
+  if (diff(px(PADX + 3, base), px(PADX + 3, y)) < 60) return "na";
+  for (let i = 0; i < n; i++){
+    const x = PADX + 6 * i, tall = diff(px(x, y), px(x + 3, y)) > 90, exp = ((digest[(i >> 3) % 32] >> (i & 7)) & 1) === 1;
+    if (tall !== exp) return "mismatch";
+  }
+  return "match";
+}
+// ==CORE-END==
+
+/* ---------- interfaz ---------- */
+if (typeof document !== "undefined") (() => {
+  const $ = id => document.getElementById(id);
+  const drop = $("drop"), fileIn = $("file"), img = $("cardImg");
+  let header = null, payload = null, values = {}, objUrl = null, sig = null, forced = false;
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+  const setErr = m => { $("err").textContent = m || ""; };
+  const chipCss = h => `background:hsl(${Math.round(h * 360)}deg 70% 72%)`;
+
+  /* ----- pestañas ----- */
+  function setView(v){
+    const lib = v === "lib";
+    $("viewOpen").hidden = lib; $("viewLib").hidden = !lib;
+    $("tabOpen").setAttribute("aria-selected", String(!lib)); $("tabLib").setAttribute("aria-selected", String(lib));
+    if (lib) renderLib();
+  }
+  $("tabOpen").onclick = () => setView("open"); $("tabLib").onclick = () => setView("lib");
+
+  /* ----- autores de confianza ----- */
+  const TKEY = "{{FORMATO_ID}}.trusted.v1"; let memTrusted = {};
+  const loadTrusted = () => { try { return JSON.parse(localStorage.getItem(TKEY) || "{}"); } catch { return memTrusted; } };
+  const saveTrusted = t => { memTrusted = t; try { localStorage.setItem(TKEY, JSON.stringify(t)); return true; } catch { return false; } };
+  function renderTrusted(){
+    const t = loadTrusted(), ul = $("trustList"); ul.innerHTML = ""; const ids = Object.keys(t);
+    $("trustNone").hidden = ids.length > 0;
+    ids.forEach(fp => {
+      const li = document.createElement("li"); li.innerHTML = `<span>${esc(t[fp].name)}<small>${esc(fp)}</small></span>`;
+      const b = document.createElement("button"); b.className = "link"; b.textContent = "Quitar"; b.setAttribute("aria-label", "Quitar a " + t[fp].name);
+      b.onclick = () => { const n = loadTrusted(); delete n[fp]; saveTrusted(n); renderTrusted(); renderSig(); renderLib(); };
+      li.append(b); ul.append(li);
+    });
+  }
+
+  /* ----- lectura de una tarjeta ----- */
+  async function fileToBytes(file){
+    let bmp;
+    try { bmp = await createImageBitmap(file, { colorSpaceConversion: "none", premultiplyAlpha: "none" }); }
+    catch { bmp = await createImageBitmap(file); }
+    const c = document.createElement("canvas"); c.width = bmp.width; c.height = bmp.height;
+    const ctx = c.getContext("2d", { willReadFrequently: true }); ctx.drawImage(bmp, 0, 0);
+    const rgba = ctx.getImageData(0, 0, c.width, c.height).data;
+    return { bytes: rgbaToBytes(rgba, c.width, c.height), rgba, width: c.width };
+  }
+  function reset(){
+    header = payload = sig = null; values = {}; forced = false; safety = []; confirmedRisk = false; setErr("");
+    $("empty").hidden = false; ["lock", "open", "meta", "sig", "safety"].forEach(i => $(i).hidden = true);
+  }
+  async function handleFile(file){
+    reset(); if (!file) return;
+    if (objUrl) URL.revokeObjectURL(objUrl);
+    objUrl = URL.createObjectURL(file); img.src = objUrl; drop.classList.add("has");
+    try {
+      const im = await fileToBytes(file); header = parseHeader(im.bytes); $("empty").hidden = true;
+      sig = { status: await verifySignature(header), fp: header.signed ? await fingerprintOf(header.pub) : null, visual: await visualStatus(im.rgba, im.width, header) };
+      renderSig();
+      if (sig.status === "invalid") return;
+      await proceed();
+    } catch (e) { setErr(e.message); }
+  }
+  async function proceed(){
+    if (header.encrypted){ $("lock").hidden = false; $("pw").value = ""; $("pw").focus(); showHeaderOnly(); }
+    else await unlock();
+  }
+  async function unlock(){
+    setErr("");
+    try { payload = await openCard(header, $("pw").value); $("lock").hidden = true; render(true); renderSig(); }
+    catch (e) { setErr(e.message); }
+  }
+
+  /* ----- estado de la firma ----- */
+  function renderSig(){
+    if (!sig) return;
+    const box = $("sig"), t = loadTrusted(), known = sig.fp && t[sig.fp], declared = header.meta.author ? String(header.meta.author) : "";
+    box.hidden = false; $("sigNote").hidden = true; $("trustRow").hidden = true; $("forceRow").hidden = true;
+    $("sigFp").textContent = sig.fp ? "Huella: " + sig.fp : "";
+    let cls = "none", title = "", desc = "";
+    if (sig.status === "none"){ title = "Sin firma"; desc = "No hay forma de comprobar quién creó esta tarjeta ni si alguien la modificó."; }
+    else if (sig.status === "unsupported"){ cls = "warn"; title = "No se pudo verificar la firma"; desc = "Tu navegador no soporta firmas Ed25519. Actualízalo (Chrome 137+, Firefox 129+, Safari 17+) antes de fiarte de esta tarjeta."; }
+    else if (sig.status === "invalid"){ cls = "bad"; title = "Firma no válida"; desc = "La tarjeta fue modificada después de firmarse, o la firma está dañada. No la uses."; $("forceRow").hidden = forced; }
+    else if (known){ cls = "good"; title = "Firma válida · autor de confianza: " + known.name; desc = "El contenido, el título y la categoría no han cambiado desde que este autor los firmó.";
+      if (declared && declared !== known.name){ $("sigNote").hidden = false; $("sigNote").textContent = "Atención: la tarjeta declara como autor a «" + declared + "», pero la clave pertenece a «" + known.name + "»."; } }
+    else {
+      const imp = declared && Object.values(t).some(a => norm(a.name) === norm(declared));
+      if (imp){ cls = "bad"; title = "Firma válida · pero NO es de «" + declared + "»";
+        desc = "Esta tarjeta dice ser de un autor en el que confías, pero está firmada con otra clave. Puede ser una suplantación: no confíes en ella."; }
+      else { cls = "warn"; title = "Firma válida · autor desconocido";
+        desc = "La firma prueba que nadie tocó la tarjeta desde que esta clave la firmó, pero no prueba quién es el dueño de la clave. Compara la huella con la que te dio el autor por otro canal antes de confiar.";
+        if (declared){ $("sigNote").hidden = false; $("sigNote").textContent = "La tarjeta declara como autor a «" + declared + "», pero eso no está verificado: cualquiera puede escribir ese nombre."; }
+        $("trustRow").hidden = false; }
+    }
+    if (sig.status === "valid" && sig.visual === "mismatch"){
+      cls = "bad"; title = "Firma válida · pero la apariencia NO corresponde a la clave";
+      desc = "El patrón de la «regla de huella» dibujada no coincide con la clave que firmó esta tarjeta. Es una señal de que la imagen imita el aspecto de otro autor. No confíes en ella."; }
+    box.className = "sig " + cls; $("sigTitle").textContent = title; $("sigDesc").textContent = desc;
+  }
+
+  /* ----- datos públicos (se ven aunque la tarjeta esté cifrada) ----- */
+  function metaRows(extra){
+    const m = header.meta, tags = Array.isArray(m.tags) ? m.tags.join(", ") : "";
+    const rows = [["Categoría", m.category], ["Versión", m.version], ["Autor declarado", m.author], ["Etiquetas", tags], ["Modelo", m.model], ...(extra || []), ["Cifrada", header.encrypted ? "Sí" : "No"]];
+    const dl = $("meta"); dl.innerHTML = "";
+    rows.filter(r => r[1]).forEach(([k, v]) => dl.insertAdjacentHTML("beforeend", `<dt>${k}</dt><dd>${esc(v)}</dd>`)); dl.hidden = false;
+  }
+  function showHeaderOnly(){ metaRows(); }
+
+  function render(first){
+    if (first){
+      const vars = findVars(payload.system, payload.prompt), pv = payload.variables || {};
+      values = {}; vars.forEach(k => values[k] = (pv[k] && pv[k].default) || "");
+      const m = header.meta, h = catHue(m);
+      $("title").innerHTML = esc(m.title || "Tarjeta privada") + (m.category && h != null ? ` <span class="chip" style="${chipCss(h)}">${esc(m.category)}</span>` : "");
+      $("desc").textContent = payload.description || ""; $("desc").hidden = !payload.description;
+      const box = $("vars"); box.innerHTML = "";
+      vars.forEach(k => {
+        const wrap = document.createElement("div");
+        const lab = document.createElement("label"); lab.htmlFor = "v_" + k; lab.textContent = (pv[k] && pv[k].label) || k;
+        const inp = document.createElement("input"); inp.type = "text"; inp.id = "v_" + k; inp.value = values[k]; inp.autocomplete = "off";
+        inp.addEventListener("input", () => { values[k] = inp.value; render(false); });
+        wrap.append(lab, inp); box.append(wrap);
+      });
+      $("varsBox").hidden = vars.length === 0;
+      metaRows([["Creada", (payload.created || "").slice(0, 10)]]); $("open").hidden = false;
+      renderSafety();
+    }
+    const marks = html => html.replace(TAGRUN_RE, r => `<mark class="hid">⟦texto oculto: «${esc(decodeTags(r))}»⟧</mark>`).replace(HIDDEN_RE, ch => `<mark class="hid">⟦U+${ch.codePointAt(0).toString(16).toUpperCase()}⟧</mark>`);
+    const show = t => marks(esc(t || "").replace(VAR_RE, (m, k) => values[k] ? `<mark>${esc(values[k])}</mark>` : `<mark class="empty-v">${esc(m)}</mark>`));
+    $("sysBlk").hidden = !payload.system; $("sysOut").innerHTML = show(payload.system); $("promptOut").innerHTML = show(payload.prompt);
+    const names = Object.keys(values), done = names.filter(k => values[k]).length;
+    $("count").textContent = names.length ? `${done} de ${names.length} completas` : "";
+  }
+
+  /* ----- revisión de seguridad ----- */
+  let safety = [], confirmedRisk = false;
+  function renderSafety(){
+    safety = scanText((payload.system || "") + "\n" + (payload.prompt || "")); confirmedRisk = false;
+    const box = $("safety"), mx = maxSeverity(safety), list = $("safetyList"); list.innerHTML = ""; box.hidden = false;
+    if (!safety.length){ box.className = "safety good"; $("safetyT").textContent = "Revisión de seguridad: sin señales de riesgo";
+      $("safetySum").textContent = "Esto no garantiza que el prompt sea seguro: es una revisión automática limitada. Léelo antes de usarlo."; return; }
+    box.className = "safety " + (mx === "alta" ? "bad" : mx === "media" ? "warn" : "good");
+    const altas = safety.filter(f => f.sev === "alta").length;
+    $("safetyT").textContent = `Revisión de seguridad: ${safety.length} señal(es)` + (altas ? `, ${altas} de riesgo alto` : "");
+    $("safetySum").textContent = "Son avisos automáticos, no un veredicto: pueden fallar en ambos sentidos. Lee el texto completo antes de pegarlo, y no lo uses en un asistente con acceso a tus archivos, correo o herramientas si no conoces al autor. Los caracteres ocultos se muestran en rojo y se eliminan al copiar.";
+    safety.forEach(f => { const li = document.createElement("li"); li.innerHTML = `<b class="sv-${f.sev}">${esc(f.sev)}</b><span>${esc(f.msg)}</span>`; list.append(li); });
+  }
+  function riskGate(){
+    const trusted = sig && sig.status === "valid" && sig.fp && loadTrusted()[sig.fp];
+    if (maxSeverity(safety) === "alta" && !trusted && !confirmedRisk){ confirmedRisk = true;
+      $("copied").textContent = "⚠ Esta tarjeta tiene señales de riesgo altas (ver «Revisión de seguridad») y su autor no es de confianza. Pulsa de nuevo solo si ya leíste el texto."; return true; }
+    return false;
+  }
+  async function copy(text, label){
+    if (riskGate()) return;
+    const removed = (String(text).match(HIDDEN_RE) || []).length; text = stripHidden(text);
+    try { await navigator.clipboard.writeText(text); }
+    catch { const t = document.createElement("textarea"); t.value = text; document.body.append(t); t.select(); document.execCommand("copy"); t.remove(); }
+    const missing = findVars(fillVars(payload.system, values), fillVars(payload.prompt, values)).length;
+    $("copied").textContent = `${label} copiado` + (missing ? ` (quedan ${missing} variables sin completar)` : "") + (removed ? ` · se quitaron ${removed} caracteres ocultos` : "");
+  }
+  const sys = () => fillVars(payload.system, values), pr = () => fillVars(payload.prompt, values);
+  $("copyAll").onclick = () => copy(payload.system ? sys() + "\n\n---\n\n" + pr() : pr(), "Todo");
+  $("copySys").onclick = () => copy(sys(), "Sistema"); $("copyPrompt").onclick = () => copy(pr(), "Prompt");
+  $("unlock").onclick = unlock; $("pw").addEventListener("keydown", e => { if (e.key === "Enter") unlock(); });
+  $("forceOpen").onclick = async () => { forced = true; renderSig(); try { await proceed(); } catch (e) { setErr(e.message); } };
+  $("trustSave").onclick = () => {
+    const name = $("trustName").value.trim(); if (!name || !sig || !sig.fp) return;
+    const t = loadTrusted(); t[sig.fp] = { name, pub: toHex(header.pub) };
+    if (!saveTrusted(t)) $("trustErr").textContent = "Este navegador no permite guardar la lista; se mantiene solo mientras la página esté abierta.";
+    $("trustName").value = ""; renderTrusted(); renderSig(); renderLib();
+  };
+  $("importPub").onclick = () => $("pubFile").click();
+  $("pubFile").addEventListener("change", async () => {
+    const f = $("pubFile").files[0]; $("trustErr").textContent = ""; if (!f) return;
+    try {
+      const d = JSON.parse(await f.text());
+      if (d.format !== "{{FORMATO_ID}}-pub") throw new Error("no es un archivo .pub de {{NOMBRE}}");
+      const pub = fromHex(d.public); if (pub.length !== 32) throw new Error("clave pública con tamaño incorrecto");
+      const fp = await fingerprintOf(pub);
+      if (d.fingerprint && d.fingerprint !== fp) throw new Error("la huella del archivo no coincide con su clave");
+      const t = loadTrusted(); t[fp] = { name: String(d.name || fp), pub: d.public };
+      if (!saveTrusted(t)) $("trustErr").textContent = "Este navegador no permite guardar la lista; se mantiene solo mientras la página esté abierta.";
+      renderTrusted(); renderSig(); renderLib();
+    } catch (e) { $("trustErr").textContent = "No se pudo importar: " + e.message + "."; }
+    $("pubFile").value = "";
+  });
+
+  drop.addEventListener("click", () => fileIn.click());
+  drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); fileIn.click(); } });
+  fileIn.addEventListener("change", () => handleFile(fileIn.files[0]));
+  ["dragenter", "dragover"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("over"); }));
+  drop.addEventListener("drop", e => { e.stopPropagation(); handleFile(e.dataTransfer.files[0]); });
+
+  /* ================= biblioteca ================= */
+  const lib = []; let catFilter = "all", failed = 0;
+  async function addToLibrary(files, fromStore){
+    failed = 0;
+    for (const f of Array.from(files)) {
+      if (!/\.png$/i.test(f.name) && f.type !== "image/png") continue;
+      const key = f.name + "|" + f.size + "|" + f.lastModified;
+      if (lib.some(e => e.key === key)) continue;
+      try {
+        const im = await fileToBytes(f), h = parseHeader(im.bytes);
+        const entry = { key, file: f, url: URL.createObjectURL(f), h, status: await verifySignature(h), fp: h.signed ? await fingerprintOf(h.pub) : null, visual: await visualStatus(im.rgba, im.width, h) };
+        lib.push(entry);
+        if (persist && !fromStore){ try { await dbPut(entry); } catch { $("persistNote").textContent = "No se pudo guardar una tarjeta en este navegador (¿sin espacio?). Sigue en la biblioteca de esta pestaña."; } }
+      } catch { failed++; }
+    }
+    renderLib();
+  }
+  function entryState(e){ const known = e.fp && loadTrusted()[e.fp]; return e.status === "valid" ? (known ? "trusted" : "valid") : e.status; }
+  function renderLib(){
+    $("libCount").textContent = `(${lib.length})`;
+    const t = loadTrusted(), q = norm($("q").value.trim()), sel = $("stateSel").value;
+    // categorías presentes
+    const counts = {}; lib.forEach(e => { const c = e.h.meta.category ? String(e.h.meta.category) : ""; counts[c] = (counts[c] || 0) + 1; });
+    const cats = $("cats"); cats.innerHTML = "";
+    const mk = (label, value, hue, n) => { const b = document.createElement("button"); b.setAttribute("aria-pressed", String(catFilter === value));
+      b.innerHTML = (hue != null ? `<i style="${chipCss(hue)}"></i>` : "") + esc(label) + ` <span style="opacity:.7">${n}</span>`; b.onclick = () => { catFilter = value; renderLib(); }; cats.append(b); };
+    if (lib.length) mk("Todas", "all", null, lib.length);
+    Object.keys(counts).sort((a, b) => a.localeCompare(b, "es")).forEach(c => { const ex = lib.find(e => (e.h.meta.category ? String(e.h.meta.category) : "") === c); mk(c || "Sin categoría", c === "" ? "__none" : c, c ? catHue(ex.h.meta) : null, counts[c]); });
+    const list = lib.filter(e => {
+      const m = e.h.meta, c = m.category ? String(m.category) : "";
+      if (catFilter !== "all" && (catFilter === "__none" ? c !== "" : c !== catFilter)) return false;
+      if (sel !== "all" && entryState(e) !== sel) return false;
+      if (!q) return true;
+      const known = e.fp && t[e.fp] ? t[e.fp].name : "";
+      return norm([m.title, m.category, m.author, known, (m.tags || []).join(" "), m.model, e.file.name].join(" ")).includes(q);
+    }).sort((a, b) => String(a.h.meta.category || "").localeCompare(String(b.h.meta.category || ""), "es") || String(a.h.meta.title || "").localeCompare(String(b.h.meta.title || ""), "es"));
+    const grid = $("libGrid"); grid.innerHTML = "";
+    $("libEmpty").hidden = lib.length > 0;
+    $("libStatus").textContent = lib.length ? `Mostrando ${list.length} de ${lib.length} tarjetas.` + (failed ? ` ${failed} archivo(s) no eran tarjetas de {{NOMBRE}} y se omitieron.` : "") : (failed ? `${failed} archivo(s) no eran tarjetas de {{NOMBRE}}.` : "");
+    list.forEach(e => {
+      const m = e.h.meta, k = e.fp && t[e.fp], st = entryState(e), h = catHue(m);
+      let stTxt, cls;
+      if (st === "trusted"){ stTxt = "✓ Firma válida · " + k.name; cls = "good"; }
+      else if (st === "valid" && e.visual === "mismatch"){ stTxt = "⚠ La apariencia no corresponde a la clave (posible imitación)"; cls = "bad"; }
+      else if (st === "valid"){
+        const dec = m.author ? String(m.author) : "";
+        if (dec && Object.values(t).some(a => norm(a.name) === norm(dec))){ stTxt = "⚠ Se hace pasar por «" + dec + "»: la firma es de otra clave"; cls = "bad"; }
+        else { stTxt = "Firma válida · autor desconocido"; cls = "warn"; } }
+      else if (st === "invalid"){ stTxt = "✗ Firma no válida"; cls = "bad"; }
+      else if (st === "unsupported"){ stTxt = "No se pudo verificar la firma"; cls = "warn"; }
+      else { stTxt = "Sin firma"; cls = "none"; }
+      const b = document.createElement("button"); b.className = "card"; b.type = "button";
+      b.innerHTML = `<img src="${e.url}" alt="" loading="lazy"><div class="ct">${esc(m.title || "Tarjeta privada")}</div>
+        <div class="cm">${m.category && h != null ? `<span class="chip" style="${chipCss(h)}">${esc(m.category)}</span>` : ""}${m.version ? `<span>v${esc(m.version)}</span>` : ""}${e.h.encrypted ? "<span>🔒 cifrada</span>" : ""}</div>
+        <div class="cs ${cls}">${esc(stTxt)}</div>`;
+      b.setAttribute("aria-label", `${m.title || "Tarjeta privada"}. ${stTxt}. Abrir.`);
+      b.onclick = () => { setView("open"); handleFile(e.file); };
+      const w = document.createElement("div"); w.className = "cw";
+      const rm = document.createElement("button"); rm.type = "button"; rm.className = "link"; rm.textContent = "Quitar de la biblioteca";
+      rm.setAttribute("aria-label", "Quitar «" + (m.title || "Tarjeta privada") + "» de la biblioteca"); rm.onclick = () => removeEntry(e);
+      w.append(b, rm); grid.append(w);
+    });
+    renderStorage();
+  }
+  /* ----- espacio ocupado y guardado local opcional (IndexedDB) ----- */
+  const PKEY = "{{FORMATO_ID}}.persist"; let persist = false, persistOK = null;
+  try { persist = localStorage.getItem(PKEY) === "1"; } catch {}
+  let dbp = null;
+  const openDB = () => dbp || (dbp = new Promise((res, rej) => { const r = indexedDB.open("{{FORMATO_ID}}", 1); r.onupgradeneeded = () => r.result.createObjectStore("cards", { keyPath: "key" }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+  const dbTx = async fn => { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction("cards", "readwrite"); fn(tx.objectStore("cards")); tx.oncomplete = () => res(); tx.onerror = tx.onabort = () => rej(tx.error); }); };
+  const dbPut = e => dbTx(st => st.put({ key: e.key, name: e.file.name, type: e.file.type || "image/png", lastModified: e.file.lastModified, blob: e.file }));
+  const dbDel = key => dbTx(st => st.delete(key));
+  const dbClear = () => dbTx(st => st.clear());
+  const dbAll = async () => { const db = await openDB(); return new Promise((res, rej) => { const r = db.transaction("cards").objectStore("cards").getAll(); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); };
+  const fmtKB = n => (n / 1024).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " KB";
+  const fmtSize = n => n >= 1048576 ? `${fmtKB(n)} (${(n / 1048576).toFixed(2)} MB)` : fmtKB(n);
+  const fmtBig = n => n >= 1073741824 ? (n / 1073741824).toFixed(1) + " GB" : n >= 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.round(n / 1024) + " KB";
+  let estTimer = null;
+  async function renderStorage(){
+    clearTimeout(estTimer); if (persist) estTimer = setTimeout(() => { renderStorage2(); }, 2500);
+    return renderStorage2();
+  }
+  async function renderStorage2(){
+    const total = lib.reduce((s, e) => s + e.file.size, 0);
+    $("libStorage").textContent = `${lib.length} tarjeta${lib.length === 1 ? "" : "s"} · ${fmtSize(total)} en total` + (persist ? " · guardadas en este navegador" : "");
+    $("clearLib").hidden = lib.length === 0;
+    $("libNote").textContent = persist
+      ? "Las copias se guardan en este navegador, no en ningún servidor. Las tarjetas cifradas siguen cifradas; las que no tienen contraseña quedan legibles para quien use este equipo y este navegador."
+      : "La biblioteca vive solo en esta pestaña: al cerrarla se vacía. Activa «Guardar la biblioteca en este navegador» para conservarla.";
+    let extra = "";
+    if (persist){ extra = `Guardado en este navegador: ${fmtSize(total)}.`;
+      if (navigator.storage && navigator.storage.estimate){ try { const est = await navigator.storage.estimate();
+        extra += ` El navegador le permite a esta página guardar hasta unos ${fmtBig(est.quota || 0)} (estimación).`; } catch {} }
+      if (persistOK !== null) extra += " " + (persistOK ? "El navegador protegió estos datos contra el borrado automático." : "El navegador podría borrar estos datos si necesita espacio."); }
+    $("libStorage2").textContent = extra;
+  }
+  async function removeEntry(e){
+    const i = lib.indexOf(e); if (i >= 0) lib.splice(i, 1); URL.revokeObjectURL(e.url);
+    if (persist){ try { await dbDel(e.key); } catch {} }
+    renderLib();
+  }
+  let clearArmed = false;
+  $("clearLib").onclick = async () => {
+    if (!clearArmed){ clearArmed = true; $("clearLib").textContent = "¿Seguro? Pulsa otra vez"; setTimeout(() => { clearArmed = false; $("clearLib").textContent = "Vaciar biblioteca"; }, 4000); return; }
+    clearArmed = false; $("clearLib").textContent = "Vaciar biblioteca"; lib.forEach(e => URL.revokeObjectURL(e.url)); lib.length = 0;
+    if (persist){ try { await dbClear(); } catch {} }
+    renderLib();
+  };
+  $("persistSw").disabled = !window.indexedDB; $("persistSw").checked = persist;
+  $("persistSw").addEventListener("change", async () => {
+    $("persistNote").textContent = "";
+    if ($("persistSw").checked){
+      try { await openDB(); for (const e of lib) await dbPut(e); persist = true; try { localStorage.setItem(PKEY, "1"); } catch {}
+        persistOK = (navigator.storage && navigator.storage.persist) ? await navigator.storage.persist().catch(() => false) : false; }
+      catch { $("persistSw").checked = false; persist = false; $("persistNote").textContent = "Este navegador no permite guardar aquí (¿modo privado?). La biblioteca seguirá viviendo solo en esta pestaña."; }
+    } else {
+      persist = false; persistOK = null; try { localStorage.setItem(PKEY, "0"); await dbClear(); } catch {}
+      $("persistNote").textContent = "Se borraron las copias guardadas en este navegador. Tus archivos originales no cambian.";
+    }
+    renderStorage();
+  });
+  if (persist){ (async () => { try { const rows = await dbAll(); await addToLibrary(rows.map(r => new File([r.blob], r.name, { type: r.type, lastModified: r.lastModified })), true); }
+    catch { persist = false; $("persistSw").checked = false; $("persistNote").textContent = "No se pudo leer la biblioteca guardada en este navegador."; renderStorage(); } })(); }
+
+  $("q").addEventListener("input", renderLib); $("stateSel").addEventListener("change", renderLib);
+  $("addFiles").onclick = () => $("libFiles").click(); $("addFolder").onclick = () => $("libFolder").click();
+  $("libFiles").addEventListener("change", async () => { await addToLibrary($("libFiles").files); $("libFiles").value = ""; });
+  $("libFolder").addEventListener("change", async () => { await addToLibrary($("libFolder").files); $("libFolder").value = ""; });
+  const vl = $("viewLib");
+  vl.addEventListener("dragover", e => { e.preventDefault(); });
+  vl.addEventListener("drop", e => { e.preventDefault(); addToLibrary(e.dataTransfer.files); });
+  window.addEventListener("dragover", e => e.preventDefault());
+  window.addEventListener("drop", e => e.preventDefault());
+  renderTrusted(); renderLib();
+})();
+</script>
+</body>
+</html>
