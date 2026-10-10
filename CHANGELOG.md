@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 ## [0.9.0] - Primera versión pública (beta)
 
 ### Incluido
+- **Botones de envío** (Compartir…, WhatsApp, Correo): abren la app con el mensaje y el enlace listos, y si el enlace es largo y se cortaría lo copian y avisan en lugar de mandarlo dañado.
 - **Compartir por enlace** (botón «Copiar enlace»): la tarjeta viaja como texto y se abre pegando el enlace o el código, a salvo de las apps que convierten las fotos a JPEG. Un JPEG ya no se ignora: la app explica qué pasó y qué pedir.
 - **Creador de tarjetas en el navegador** (pestaña Crear): escribes el prompt y obtienes el PNG, con firma Ed25519 y cifrado opcionales; identidad de firma guardada en el navegador y exportable como el mismo `.pcid` de la línea de comandos. Lo que crea el navegador lo abre y verifica Python, y al revés (pruebas cruzadas).
 - Formato de tarjeta v4: etiqueta PNG con bloque público firmado, payload comprimido y cifrado opcional (AES-256-GCM, PBKDF2 con 600 000 iteraciones) y firma Ed25519.

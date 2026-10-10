@@ -277,6 +277,46 @@ with sync_playwright() as p:
     c5.close()
     check('M compartir por enlace y abrir JPEG no produce errores de consola ni de JavaScript', len(errors) == n1, '; '.join(errors[n1:])[:300])
 
+    # --- N) enviar la tarjeta: menú del dispositivo, WhatsApp y correo (se captura lo que intentan abrir)
+    from urllib.parse import unquote; import re as _re, random as _r2; n2 = len(errors)
+    HOOK = "window.__clicks = []; const __orig = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function(){ if (/^(https:\\/\\/wa\\.me|mailto:)/.test(this.href)){ window.__clicks.push(this.href); return; } return __orig.call(this); };"
+    def envio(share=''):
+        c = b.new_context(viewport={'width': 1200, 'height': 1000}, accept_downloads=True, permissions=['clipboard-read', 'clipboard-write']); c.add_init_script(HOOK + share)
+        x = pagina(c); x.goto(URL); x.wait_for_timeout(500); return c, x
+    def ultimo(x): return (x.evaluate('window.__clicks') or [''])[-1]
+    def texto_aleatorio(n, semilla):
+        g = _r2.Random(semilla); return ' '.join(''.join(g.choice('abcdefghijklmnopqrstuvwxyz') for _ in range(g.randint(3, 9))) for _ in range(n // 6))
+    c6, q = envio(); llenar(q, titulo='Para enviar', prompt='Hola {{nombre}}, tarjeta pequeña para enviar.'); crear(q); r_env = descargar(q, '#rDownload')
+    check('N sin API de compartir del dispositivo, el botón «Compartir…» no se muestra; con ella, sí', q.is_visible('#rShare') == (q.evaluate('typeof navigator.share') == 'function'))
+    q.click('#rWa'); q.wait_for_timeout(200); wa = ultimo(q); msg = unquote(wa.split('text=', 1)[1]) if 'text=' in wa else ''
+    mm = _re.search(r'#c=([A-Za-z0-9_-]+)', msg)
+    check('N «WhatsApp»: abre wa.me con un mensaje que lleva el título y el enlace', wa.startswith('https://wa.me/?text=') and '«Para enviar»' in msg and mm is not None, wa[:90])
+    cd = mm.group(1) if mm else ''
+    check('N ... y el código del mensaje es exactamente la tarjeta del PNG', base64.urlsafe_b64decode(cd + '=' * (-len(cd) % 4)) == cs.read_card(r_env))
+    q.click('#rMail'); q.wait_for_timeout(200); ml = ultimo(q); subj = unquote(ml.split('subject=', 1)[1].split('&body=')[0]) if 'subject=' in ml else ''; body = unquote(ml.split('&body=', 1)[1]) if '&body=' in ml else ''
+    check('N «Correo»: abre mailto con asunto y cuerpo que llevan el título y el enlace completo', ml.startswith('mailto:?subject=') and 'Para enviar' in subj and ('#c=' + cd) in body and len(ml) <= 1800, (subj, len(ml)))
+    q.fill('#cPrompt', texto_aleatorio(3000, 1)); crear(q); q.click('#rWa'); q.wait_for_timeout(200); wa2 = ultimo(q); q.click('#rMail'); q.wait_for_timeout(300); ml2 = ultimo(q)
+    check('N tarjeta mediana: WhatsApp sí la lleva completa en la dirección', wa2.startswith('https://wa.me/?text=') and len(wa2) <= 6000 and '#c=' in unquote(wa2), len(wa2))
+    check('N ... pero el correo NO manda el enlace dentro de la dirección (se cortaría): lo copia y deja un cuerpo corto', ml2.startswith('mailto:?subject=') and '#c=' not in unquote(ml2) and 'Pega aquí' in unquote(ml2) and '#c=' in clip(q) and 'demasiado largo' in q.inner_text('#resultInfo'), q.inner_text('#resultInfo')[:120])
+    q.fill('#cPrompt', texto_aleatorio(12000, 2)); crear(q); antes = len(q.evaluate('window.__clicks')); q.click('#rWa'); q.wait_for_timeout(300)
+    check('N tarjeta grande: WhatsApp no abre nada con el enlace cortado; lo copia y avisa', len(q.evaluate('window.__clicks')) == antes and '#c=' in clip(q) and 'demasiado largo' in q.inner_text('#resultInfo'), q.inner_text('#resultInfo')[:120])
+    q.fill('#cPrompt', grande); crear(q)
+    for boton in ('#rWa', '#rMail', '#rLink'):
+        q.click(boton); q.wait_for_timeout(200)
+        if 'demasiado grande' not in q.inner_text('#resultInfo'): check('N tarjeta enorme: ' + boton + ' avisa que no cabe en un enlace', False, q.inner_text('#resultInfo')[:100]); break
+    else: check('N tarjeta enorme (270 KB): ningún botón de enlace intenta mandarla; todos recomiendan el PNG como documento', True)
+    c6.close()
+    c7, q = envio("navigator.share = d => { window.__shared = d; return Promise.resolve(); };"); llenar(q, titulo='Con menú', prompt='Hola {{x}}.'); crear(q)
+    check('N con la API de compartir, el botón «Compartir…» aparece', q.is_visible('#rShare'))
+    q.click('#rShare'); q.wait_for_timeout(300); sh = q.evaluate('window.__shared')
+    check('N «Compartir…» pasa al menú del dispositivo el mensaje con el título y el enlace', sh and '«Con menú»' in sh['text'] and '#c=' in sh['text'] and 'No se pudo' not in q.inner_text('#resultInfo'), sh)
+    c7.close()
+    c8, q = envio("navigator.share = d => Promise.reject(Object.assign(new Error('cancelado'), {name: 'AbortError'}));"); llenar(q, titulo='Cancelada', prompt='Hola.'); crear(q); q.click('#rShare'); q.wait_for_timeout(300)
+    check('N si cancelas el menú de compartir no aparece ningún error', 'No se pudo' not in q.inner_text('#resultInfo')); c8.close()
+    c9, q = envio("navigator.share = d => Promise.reject(new Error('fallo'));"); llenar(q, titulo='Falla', prompt='Hola.'); crear(q); q.click('#rShare'); q.wait_for_timeout(400)
+    check('N si el menú de compartir falla, se copia el enlace y se avisa', 'No se pudo abrir el menú' in q.inner_text('#resultInfo') and '#c=' in clip(q), q.inner_text('#resultInfo')[:100]); c9.close()
+    check('N enviar tarjetas no produce errores de consola ni de JavaScript', len(errors) == n2, '; '.join(errors[n2:])[:300])
+
     # --- I) móvil
     m = b.new_context(viewport={'width': 390, 'height': 800}); mp = m.new_page(); mp.goto(URL); mp.set_input_files('#file', P('asistente-de-punto-de-venta_v1.0.encapsulado.png')); mp.wait_for_timeout(800)
     w1 = mp.evaluate('document.documentElement.scrollWidth'); mp.screenshot(path=f'{OUT}/movil_abrir.png', full_page=True)

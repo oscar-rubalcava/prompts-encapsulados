@@ -143,6 +143,7 @@
   .warnl{color:var(--warn);font-size:13px;margin:8px 0 0} .fpl{font:12px var(--mono);margin:4px 0 0;overflow-wrap:anywhere}
   .big{font-size:16px;padding:13px 22px}
   .pastebox{margin-top:18px}
+  .sendh{margin:16px 0 0;font:700 13px var(--mono)}
   @media (min-width:900px){#viewCreate .left{position:static}}              /* la columna es más alta que algunas pantallas: pegajosa dejaría partes inalcanzables */
   .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:space-between}
   .foot a{color:var(--ink)}
@@ -168,11 +169,15 @@
       <div class="result">
         <div class="resultbox" id="resultBox"><p id="resultHint" style="margin:0">Aquí aparecerá tu tarjeta cuando pulses «Crear tarjeta».</p><img id="resultImg" alt="Tarjeta creada" hidden></div>
         <p class="ok" id="resultInfo" role="status"></p>
-        <p class="hint2" id="shareTip" hidden>Por WhatsApp: usa «Copiar enlace», o envía el PNG como <b>Documento</b>, nunca como Foto: WhatsApp convierte las fotos a JPEG y la tarjeta deja de abrirse.</p>
+        <p class="hint2" id="shareTip" hidden>Para enviarla, usa el enlace (los botones de abajo). Si prefieres mandar el PNG por WhatsApp, envíalo como <b>Documento</b>, nunca como Foto: WhatsApp convierte las fotos a JPEG y la tarjeta deja de abrirse.</p>
         <input type="text" id="linkOut" readonly hidden aria-label="Enlace de la tarjeta" style="margin-top:10px">
-        <div class="row" id="resultBtns" hidden>
-          <button class="p" id="rDownload">Descargar PNG</button><button class="g" id="rOpen">Abrir para comprobar</button>
-          <button class="g" id="rLib">Añadir a la biblioteca</button><button class="g" id="rLink" title="Copia un enlace que lleva la tarjeta dentro: se puede pegar en WhatsApp, correo o cualquier chat">Copiar enlace</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button>
+        <div id="resultBtns" hidden>
+          <div class="row"><button class="p" id="rDownload">Descargar PNG</button><button class="g" id="rOpen">Abrir para comprobar</button>
+            <button class="g" id="rLib">Añadir a la biblioteca</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button></div>
+          <p class="sendh">Enviar la tarjeta</p>
+          <div class="row"><button class="g" id="rShare" hidden title="Abre el menú de tu dispositivo para elegir la app">Compartir…</button>
+            <button class="g" id="rWa" title="Abre WhatsApp con el mensaje y el enlace ya escritos">WhatsApp</button><button class="g" id="rMail" title="Abre tu correo con el mensaje y el enlace ya escritos">Correo</button>
+            <button class="g" id="rLink" title="Copia un enlace que lleva la tarjeta dentro: se puede pegar en cualquier chat">Copiar enlace</button></div>
         </div>
       </div>
       <section class="trust" id="idPanel" aria-labelledby="idH">
@@ -1127,7 +1132,7 @@ if (typeof document !== "undefined") (() => {
       const blob = await encodePNG(img.rgba, img.width, img.height);
       const cid = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", stream))).slice(0, 8);
       const name = (f.hide ? "tarjeta-privada_" + cid : slugify(f.title) + "_v" + f.version) + "." + EXTENSION + ".png";
-      last = { blob, name, stream, file: new File([blob], name, { type: "image/png" }) };
+      last = { blob, name, stream, title: f.hide ? "" : f.title, file: new File([blob], name, { type: "image/png" }) };
       if ($("resultImg").src.startsWith("blob:")) URL.revokeObjectURL($("resultImg").src);
       $("resultImg").src = URL.createObjectURL(blob); $("resultImg").hidden = false; $("resultHint").hidden = true; $("resultBox").classList.add("has");
       $("resultInfo").textContent = `${name} · ${fmtKB(blob.size)} · ${[f.sign ? "firmada" : "sin firma", f.enc ? "cifrada" : null, f.hide ? "privada" : null].filter(Boolean).join(", ")}. Verificada: se lee de vuelta idéntica.` + (f.enc && f.pw.length < 12 ? " Aviso: la contraseña es corta (menos de 12 caracteres); quien tenga el archivo puede probar contraseñas sin límite. Usa una frase larga." : "");
@@ -1150,6 +1155,33 @@ if (typeof document !== "undefined") (() => {
     if (link.length > MAX_LINK){ $("resultInfo").textContent = `Esta tarjeta es demasiado grande para un enlace (${n} caracteres; el máximo práctico es ${MAX_LINK.toLocaleString("en-US")}). Envíala como PNG y, por WhatsApp, como DOCUMENTO.`; return; }
     try { await navigator.clipboard.writeText(link); $("linkOut").hidden = true; $("resultInfo").textContent = `Enlace copiado (${n} caracteres). Pégalo en WhatsApp, correo o donde quieras: quien lo abra verá la tarjeta y su firma. El contenido viaja dentro del enlace y no se sube a ningún servidor.`; }
     catch { $("linkOut").value = link; $("linkOut").hidden = false; $("linkOut").focus(); $("linkOut").select(); $("resultInfo").textContent = `Tu navegador no dejó copiar solo. El enlace (${n} caracteres) está seleccionado abajo: cópialo con Cmd+C o Ctrl+C.`; }
+  };
+  /* ----- enviar: menú del dispositivo, WhatsApp o correo (con regla de tamaño: nunca se manda un enlace cortado) ----- */
+  const WA_MAX = 6000, MAIL_MAX = 1800;                    // WhatsApp: prudente, no verificado; correo: las direcciones mailto: se cortan cerca de los 2 000 caracteres
+  const info = m => { $("resultInfo").textContent = m; };
+  const shareMsg = link => `Te comparto ${last.title ? "«" + last.title.slice(0, 80) + "»" : "una tarjeta privada"} de {{NOMBRE}}. Ábrela aquí (se verifica en tu navegador y no se sube a ningún servidor): ${link}`;
+  const clickLink = (href, blank) => { const a = document.createElement("a"); a.href = href; if (blank){ a.target = "_blank"; a.rel = "noopener noreferrer"; } document.body.append(a); a.click(); a.remove(); };
+  const copyLink = async link => { try { await navigator.clipboard.writeText(link); return true; } catch { $("linkOut").value = link; $("linkOut").hidden = false; $("linkOut").select(); return false; } };
+  const tooBig = link => info(`Esta tarjeta es demasiado grande para un enlace (${link.length.toLocaleString("en-US")} caracteres; el máximo práctico es ${MAX_LINK.toLocaleString("en-US")}). Envíala como PNG y, por WhatsApp, como DOCUMENTO.`);
+  $("rShare").hidden = typeof navigator.share !== "function";
+  $("rShare").onclick = async () => {
+    if (!last) return; const link = linkOf(last.stream); if (link.length > MAX_LINK) return tooBig(link);
+    try { await navigator.share({ title: "{{NOMBRE}}", text: shareMsg(link) }); }
+    catch (e){ if (e && e.name === "AbortError") return; info((await copyLink(link) ? "No se pudo abrir el menú de compartir. Copié el enlace: pégalo donde quieras enviarlo." : "No se pudo abrir el menú de compartir. El enlace está seleccionado abajo: cópialo con Cmd+C o Ctrl+C.")); }
+  };
+  $("rWa").onclick = async () => {
+    if (!last) return; const link = linkOf(last.stream); if (link.length > MAX_LINK) return tooBig(link);
+    const url = "https://wa.me/?text=" + encodeURIComponent(shareMsg(link));
+    if (url.length <= WA_MAX){ clickLink(url, true); info("Abriendo WhatsApp con el mensaje listo: elige el chat y envíalo."); return; }
+    info((await copyLink(link)) ? "El enlace de esta tarjeta es demasiado largo para pasarlo directo a WhatsApp sin que se corte. Lo copié: abre WhatsApp y pégalo en el chat." : "El enlace es demasiado largo para pasarlo directo. Está seleccionado abajo: cópialo con Cmd+C o Ctrl+C y pégalo en WhatsApp.");
+  };
+  $("rMail").onclick = async () => {
+    if (!last) return; const link = linkOf(last.stream); if (link.length > MAX_LINK) return tooBig(link);
+    const subject = "Tarjeta de {{NOMBRE}}" + (last.title ? ": " + last.title.slice(0, 80) : ""), url = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(shareMsg(link));
+    if (url.length <= MAIL_MAX){ clickLink(url, false); info("Abriendo tu correo con el mensaje listo."); return; }
+    const ok = await copyLink(link);
+    clickLink("mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent("Pega aquí el enlace de la tarjeta (ya está copiado). Se abre en el navegador y comprueba la firma."), false);
+    info(ok ? "El enlace es demasiado largo para ir dentro del correo sin cortarse. Lo copié: pégalo en el cuerpo del mensaje (o descarga el PNG y adjúntalo)." : "El enlace es demasiado largo para ir dentro del correo. Está seleccionado abajo: cópialo y pégalo en el mensaje (o adjunta el PNG).");
   };
   const openCode = () => {
     $("codeErr").textContent = ""; const b = linkBytes($("codeIn").value);

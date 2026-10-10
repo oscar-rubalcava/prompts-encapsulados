@@ -49,11 +49,12 @@ Prompts travel as loose text in chats and documents. You cannot tell **who** mad
 
 | Channel | What to do |
 |---|---|
-| **WhatsApp, Telegram and chats** | Press **Copiar enlace** (Copy link) and paste it into the chat. The card travels inside the link, as text, safe from image conversions. Whoever opens it sees the card in the browser, with its signature. |
-| **Email, AirDrop, Drive** | Send the PNG as an attachment. |
+| **WhatsApp, Telegram and chats** | Under “Enviar la tarjeta” (Send the card), press **WhatsApp** (opens the app with the message and link ready), **Compartir…** (your phone's share menu) or **Copiar enlace** (Copy link) and paste it anywhere. The card travels inside the link, as text, safe from image conversions. Whoever opens it sees the card in the browser, with its signature. |
+| **Email** | The **Correo** button opens your mail app with the message ready. If the link is long and would be cut off, it copies it and tells you; you can also attach the PNG. |
+| **AirDrop, Drive** | Send the PNG as a file. |
 | **WhatsApp, sending the PNG** | Send it as a **Document**, never as a **Photo**. |
 
-**Why a photo breaks it:** the card's data lives in the pixels of a lossless PNG. If an app converts the image to JPEG (WhatsApp does this to photos), that data is destroyed and cannot be recovered. The decoder recognizes this and explains it, but that copy can no longer be opened: ask for another one as a link or a document. **Link limit:** about 44 KB of card (around 60,000 characters); larger ones go as PNG.
+**Why a photo breaks it:** the card's data lives in the pixels of a lossless PNG. If an app converts the image to JPEG (WhatsApp does this to photos), that data is destroyed and cannot be recovered. The decoder recognizes this and explains it, but that copy can no longer be opened: ask for another one as a link or a document. **Link limit:** about 44 KB of card (around 60,000 characters); larger ones go as PNG. The WhatsApp and email buttons never send a truncated link: if it does not fit, they copy it and tell you. (WhatsApp's exact limit for long links is not verified.)
 
 ## Name
 The official name is **Prompts Encapsulados** (Spanish for “encapsulated prompts”); the short name is **Encapsulados**. The command is `encapsulados` and cards are saved as `title_v1.0.encapsulado.png`.
