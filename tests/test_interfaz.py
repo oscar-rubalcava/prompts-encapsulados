@@ -317,6 +317,38 @@ with sync_playwright() as p:
     check('N si el menú de compartir falla, se copia el enlace y se avisa', 'No se pudo abrir el menú' in q.inner_text('#resultInfo') and '#c=' in clip(q), q.inner_text('#resultInfo')[:100]); c9.close()
     check('N enviar tarjetas no produce errores de consola ni de JavaScript', len(errors) == n2, '; '.join(errors[n2:])[:300])
 
+    # --- O) nueva tarjeta sin recargar, aviso flotante de copiado y descripciones de los botones
+    n3 = len(errors); c10, q = nuevo(); llenar(q, titulo='Primera', prompt='Hola {{x}}, primera tarjeta.'); q.fill('#idNameIn', 'Serie Prueba'); q.click('#idCreate'); q.wait_for_selector('#idHave:not([hidden])', timeout=15000)
+    q.check('#cSign'); crear(q); o1 = descargar(q, '#rDownload')
+    check('O tras crear una tarjeta aparece el botón «Nueva tarjeta»', q.is_visible('#rNew') and q.is_visible('#cNew'))
+    q.click('#rNew'); q.wait_for_timeout(300)
+    check('O «Nueva tarjeta» limpia el formulario y el resultado sin recargar (y sin pedir confirmación si no hay nada sin guardar)',
+          q.input_value('#cTitle') == '' and q.input_value('#cPrompt') == '' and q.input_value('#cVersion') == '1.0' and not q.is_visible('#resultBtns') and q.is_visible('#resultHint') and not q.is_visible('#resultImg'))
+    check('O ... conserva tu identidad y la casilla de firmar, y deja el cursor en el título', 'Serie Prueba' in q.inner_text('#idName') and q.is_checked('#cSign') and q.evaluate('document.activeElement.id') == 'cTitle')
+    check('O ... y muestra el aviso «Formulario limpio»', 'Formulario limpio' in q.inner_text('#toast') and q.is_visible('#toast'))
+    llenar(q, titulo='Segunda', prompt='Hola {{y}}, segunda tarjeta.'); crear(q); o2 = descargar(q, '#rDownload')
+    i1, i2 = cs.parse(cs.read_card(o1)), cs.parse(cs.read_card(o2))
+    check('O se crea una segunda tarjeta sin recargar: firma válida, misma identidad y emblema distinto', cs.describe_signature(i1)[0] == 'valid' and cs.describe_signature(i2)[0] == 'valid' and i1['pub'] == i2['pub'] and i1['public']['emblem'] != i2['public']['emblem'] and i2['public']['title'] == 'Segunda')
+    q.fill('#cTitle', 'Cambio a medias'); q.click('#rNew')
+    check('O con algo escrito sin convertir en tarjeta, pide confirmación en lugar de borrar', '¿Borrar lo escrito' in q.inner_text('#rNew') and q.input_value('#cTitle') == 'Cambio a medias' and q.is_visible('#resultBtns'))
+    q.click('#rNew'); q.wait_for_timeout(300); check('O ... y al confirmar, sí lo borra', q.input_value('#cTitle') == '' and 'Nueva tarjeta' in q.inner_text('#rNew') and not q.is_visible('#resultBtns'))
+    q.fill('#cTitle', 'X'); q.fill('#cPrompt', 'Y'); q.click('#cNew'); check('O el botón del formulario también protege lo escrito', '¿Borrar lo escrito' in q.inner_text('#cNew') and q.input_value('#cPrompt') == 'Y')
+    q.click('#cNew'); q.wait_for_timeout(300); check('O ... y confirma', q.input_value('#cPrompt') == '' and 'Nueva tarjeta' in q.inner_text('#cNew'))
+    llenar(q, titulo='Para el aviso', prompt='Hola {{z}}.'); crear(q); q.click('#rLink'); q.wait_for_timeout(300)
+    check('O «Copiar enlace» muestra un aviso flotante «Enlace copiado»', q.is_visible('#toast') and 'Enlace copiado' in q.inner_text('#toast'), q.inner_text('#toast'))
+    q.wait_for_timeout(3300); check('O ... que desaparece solo', not q.is_visible('#toast'))
+    q.click('#rOpen'); q.wait_for_selector('#open', state='visible', timeout=10000); q.click('#copyPrompt'); q.wait_for_timeout(300)
+    check('O copiar el prompt también muestra el aviso flotante', 'Prompt copiado' in q.inner_text('#toast') and q.is_visible('#toast'), q.inner_text('#toast'))
+    ids = ['tabCreate', 'tabOpen', 'tabLib', 'rDownload', 'rNew', 'cNew', 'rOpen', 'rLib', 'rReroll', 'rShare', 'rWa', 'rMail', 'rLink', 'idCreate', 'idImport', 'idBackup', 'idPubDl', 'idDel', 'cCreate',
+           'codeOpen', 'importPub', 'trustSave', 'forceOpen', 'unlock', 'copyAll', 'copySys', 'copyPrompt', 'addFiles', 'addFolder', 'clearLib']
+    sin = [i for i in ids if not (q.get_attribute('#' + i, 'title') or '').strip()]
+    check('O todos los botones tienen una descripción al pasar el ratón', not sin, sin)
+    q.click('#tabLib'); q.set_input_files('#libFiles', o1); q.wait_for_timeout(1200); q.click('#tabCreate')
+    c10.close()
+    c11, q = nuevo(); q.click('#tabLib'); q.set_input_files('#libFiles', o1); q.wait_for_timeout(1200)
+    check('O el botón «Quitar de la biblioteca» tiene descripción', bool((q.get_attribute('.cw button.link', 'title') or '').strip()), q.get_attribute('.cw button.link', 'title')); c11.close()
+    check('O nueva tarjeta, avisos y descripciones no producen errores de consola ni de JavaScript', len(errors) == n3, '; '.join(errors[n3:])[:300])
+
     # --- I) móvil
     m = b.new_context(viewport={'width': 390, 'height': 800}); mp = m.new_page(); mp.goto(URL); mp.set_input_files('#file', P('asistente-de-punto-de-venta_v1.0.encapsulado.png')); mp.wait_for_timeout(800)
     w1 = mp.evaluate('document.documentElement.scrollWidth'); mp.screenshot(path=f'{OUT}/movil_abrir.png', full_page=True)

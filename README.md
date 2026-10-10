@@ -108,7 +108,7 @@ Modelo de amenazas completo: [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md). Para repo
 
 ## Hoja de ruta
 
-- [ ] Probar el creador en más navegadores (hoy, solo Chromium) y con varias identidades
+- [ ] Probar el creador en más navegadores (hoy: Chromium en el CI; a mano, crear y enviar por WhatsApp desde Safari en iPhone y abrir en Chrome de Mac) y con varias identidades
 - [ ] Crear una versión nueva a partir de una tarjeta existente
 - [ ] Cifrado por destinatario (clave pública), sin contraseña compartida
 - [ ] Caducidad y lista de revocación firmada

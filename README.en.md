@@ -95,7 +95,7 @@ Full threat model: [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md) (Spanish). To report
 
 ## Roadmap
 
-- [ ] Test the creator in more browsers (today, Chromium only) and with several identities
+- [ ] Test the creator in more browsers (today: Chromium in CI; by hand, creating and sending via WhatsApp from Safari on iPhone and opening in Chrome on Mac) and with several identities
 - [ ] Create a new version from an existing card
 - [ ] Recipient-bound encryption (public key), no shared password
 - [ ] Expiry and a signed revocation list

@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; font-src data:; script-src 'sha256-ZKoCfAcLZsp2gZ6dcSTO8sJ1IEO8b75IKH+FUAJ9OLc='; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; font-src data:; script-src 'sha256-dmucUHBglepnxSGfsJryRKKwLiP9kazwJoHN5Wnvsus='; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prompts Encapsulados</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20role%3D%22img%22%20aria-label%3D%22Prompts%20Encapsulados%3A%20prensa%20hidr%C3%A1ulica%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2244%22%20fill%3D%22%2317202A%22%2F%3E%3Cg%20fill%3D%22%23E6EDF5%22%20transform%3D%22translate%280%2014.5%29%22%3E%3Crect%20x%3D%2244%22%20y%3D%22128%22%20width%3D%22112%22%20height%3D%2222%22%20rx%3D%223%22%2F%3E%3Cg%20transform%3D%22translate%280%200%29%22%3E%3Crect%20x%3D%2244%22%20y%3D%2269%22%20width%3D%22112%22%20height%3D%2213%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2293%22%20y%3D%2247%22%20width%3D%2214%22%20height%3D%2222%22%2F%3E%3Crect%20x%3D%2280%22%20y%3D%2221%22%20width%3D%2240%22%20height%3D%2226%22%20rx%3D%223%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E">
@@ -144,6 +144,8 @@
   .big{font-size:16px;padding:13px 22px}
   .pastebox{margin-top:18px}
   .sendh{margin:16px 0 0;font:700 13px var(--mono)}
+  .formhead{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap} .formhead .desc{margin-bottom:20px}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--btn);color:var(--btn-ink);font:700 14px var(--mono);padding:12px 20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.45);z-index:50;max-width:calc(100vw - 32px);text-align:center}
   @media (min-width:900px){#viewCreate .left{position:static}}              /* la columna es más alta que algunas pantallas: pegajosa dejaría partes inalcanzables */
   .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:space-between}
   .foot a{color:var(--ink)}
@@ -157,9 +159,9 @@
     <div class="brand"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Prompts Encapsulados: prensa hidráulica"><rect width="200" height="200" rx="44" fill="#17202A"/><g fill="#E6EDF5" transform="translate(0 14.5)"><rect x="44" y="128" width="112" height="22" rx="3"/><g transform="translate(0 0)"><rect x="44" y="69" width="112" height="13" rx="3"/><rect x="93" y="47" width="14" height="22"/><rect x="80" y="21" width="40" height="26" rx="3"/></g></g></svg><b>Encapsulados</b></div>
     <p>Crea tarjetas de prompts, ábrelas, comprueba quién las firmó, rellena sus variables y cópialas.</p>
     <nav role="tablist" aria-label="Secciones">
-      <button role="tab" id="tabCreate" aria-selected="true">Crear</button>
-      <button role="tab" id="tabOpen" aria-selected="false">Abrir</button>
-      <button role="tab" id="tabLib" aria-selected="false">Biblioteca <span id="libCount">(0)</span></button>
+      <button role="tab" id="tabCreate" aria-selected="true" title="Crea una tarjeta nueva a partir de tu prompt">Crear</button>
+      <button role="tab" id="tabOpen" aria-selected="false" title="Abre una tarjeta (PNG, enlace o código) y comprueba quién la firmó">Abrir</button>
+      <button role="tab" id="tabLib" aria-selected="false" title="Tus tarjetas guardadas: busca, filtra y revisa su firma">Biblioteca <span id="libCount">(0)</span></button>
     </nav>
   </header>
 
@@ -172,8 +174,8 @@
         <p class="hint2" id="shareTip" hidden>Para enviarla, usa el enlace (los botones de abajo). Si prefieres mandar el PNG por WhatsApp, envíalo como <b>Documento</b>, nunca como Foto: WhatsApp convierte las fotos a JPEG y la tarjeta deja de abrirse.</p>
         <input type="text" id="linkOut" readonly hidden aria-label="Enlace de la tarjeta" style="margin-top:10px">
         <div id="resultBtns" hidden>
-          <div class="row"><button class="p" id="rDownload">Descargar PNG</button><button class="g" id="rOpen">Abrir para comprobar</button>
-            <button class="g" id="rLib">Añadir a la biblioteca</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button></div>
+          <div class="row"><button class="p" id="rDownload" title="Guarda la tarjeta como imagen PNG en tu equipo">Descargar PNG</button><button class="g" id="rNew" title="Borra el formulario y empieza una tarjeta nueva (tu identidad se conserva)">Nueva tarjeta</button><button class="g" id="rOpen" title="Abre esta misma tarjeta como la vería quien la reciba: firma, variables y prompt">Abrir para comprobar</button>
+            <button class="g" id="rLib" title="Añade la tarjeta a tu biblioteca">Añadir a la biblioteca</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button></div>
           <p class="sendh">Enviar la tarjeta</p>
           <div class="row"><button class="g" id="rShare" hidden title="Abre el menú de tu dispositivo para elegir la app">Compartir…</button>
             <button class="g" id="rWa" title="Abre WhatsApp con el mensaje y el enlace ya escritos">WhatsApp</button><button class="g" id="rMail" title="Abre tu correo con el mensaje y el enlace ya escritos">Correo</button>
@@ -188,21 +190,22 @@
           <div class="two" style="margin-bottom:12px"><div><label for="idColor">Color</label><input type="color" id="idColor" value="#4f8cff"></div>
             <div><label for="idMark">Sello</label><select id="idMark"><option value="q">Monograma Q</option><option value="auto">Emblema de mi clave</option></select></div></div>
           <div class="f"><label for="idPwIn">Contraseña para protegerla (recomendado)</label><input type="password" id="idPwIn" autocomplete="new-password"><small>Sin contraseña, cualquiera que use este navegador podría firmar como tú.</small></div>
-          <div class="row"><button class="p" id="idCreate">Crear mi identidad</button><button class="g" id="idImport">Ya tengo una (.pcid)</button></div>
+          <div class="row"><button class="p" id="idCreate" title="Crea tu identidad de firma: un par de claves que se queda en este navegador">Crear mi identidad</button><button class="g" id="idImport" title="Importa una identidad que ya tengas (archivo .pcid)">Ya tengo una (.pcid)</button></div>
           <input type="file" id="idFile" accept=".pcid,.json,application/json" hidden>
         </div>
         <div id="idHave" hidden>
           <p class="stline" id="idName" style="margin:0;font:700 15px var(--mono)"></p><p class="fpl" id="idFp"></p><p class="none" id="idProt"></p>
           <p class="warnl">Descarga tu copia de seguridad y guárdala fuera de carpetas públicas: si borras los datos del navegador o cambias de equipo, perderías la identidad.</p>
-          <div class="row" style="margin-top:10px"><button class="g" id="idBackup">Copia de seguridad (.pcid)</button><button class="g" id="idPubDl">Clave pública (.pub)</button><button class="link" id="idDel">Quitar de este navegador</button></div>
+          <div class="row" style="margin-top:10px"><button class="g" id="idBackup" title="Descarga tu identidad (.pcid). Es tu clave secreta: guárdala fuera de carpetas públicas">Copia de seguridad (.pcid)</button><button class="g" id="idPubDl" title="Descarga tu clave pública (.pub): es la que compartes para que confíen en tus tarjetas">Clave pública (.pub)</button><button class="link" id="idDel" title="Quita la identidad de este navegador (no borra tu copia de seguridad)">Quitar de este navegador</button></div>
         </div>
         <p class="err" id="idErr" role="alert"></p>
       </section>
       <p class="privacy">Todo se hace en tu navegador. Tu prompt, tus contraseñas y tus claves no se envían a ningún servidor.</p>
     </aside>
     <main>
-      <h2>Crear una tarjeta</h2>
-      <p class="desc">Escribe tu prompt y conviértelo en una etiqueta PNG que puedes enviar, firmar y cifrar.</p>
+      <div class="formhead"><div><h2>Crear una tarjeta</h2>
+        <p class="desc">Escribe tu prompt y conviértelo en una etiqueta PNG que puedes enviar, firmar y cifrar.</p></div>
+        <button class="g" id="cNew" title="Borra el formulario y empieza una tarjeta nueva (tu identidad se conserva)">Nueva tarjeta</button></div>
       <div class="f"><label for="cTitle">Título</label><input type="text" id="cTitle" maxlength="120" autocomplete="off" placeholder="Ej.: Redactor de correos formales"></div>
       <div class="two">
         <div><label for="cCategory">Categoría (opcional)</label><input type="text" id="cCategory" maxlength="40" list="catList" autocomplete="off" placeholder="Ej.: Correo"><datalist id="catList"></datalist></div>
@@ -225,7 +228,7 @@
       <label class="chk"><input type="checkbox" id="cHide"><span>Tarjeta privada<small>Sin título, categoría ni autor visibles en la imagen.</small></span></label>
       <label class="chk"><input type="checkbox" id="cStrip" checked><span>Quitar caracteres ocultos del texto<small>Los que se cuelan al copiar de páginas web y que se pueden usar para esconder instrucciones.</small></span></label>
       <p class="err" id="cErr" role="alert"></p>
-      <div class="top-actions"><button class="p big" id="cCreate">Crear tarjeta</button></div>
+      <div class="top-actions"><button class="p big" id="cCreate" title="Crea la tarjeta PNG con lo que escribiste">Crear tarjeta</button></div>
     </main>
   </div>
 
@@ -239,7 +242,7 @@
       </div>
       <input type="file" id="file" accept="image/*" hidden>
       <div class="pastebox"><label for="codeIn">¿Te llegó un enlace o un código?</label>
-        <div class="row"><input type="text" id="codeIn" placeholder="Pega aquí el enlace o el código" autocomplete="off" style="flex:1;min-width:150px"><button class="g" id="codeOpen">Abrir</button></div>
+        <div class="row"><input type="text" id="codeIn" placeholder="Pega aquí el enlace o el código" autocomplete="off" style="flex:1;min-width:150px"><button class="g" id="codeOpen" title="Abre la tarjeta del enlace o código que pegaste">Abrir</button></div>
         <p class="err" id="codeErr" role="alert"></p></div>
       <dl class="meta" id="meta" hidden></dl>
 
@@ -247,7 +250,7 @@
         <h3 id="trustH">Autores de confianza</h3>
         <p class="none" id="trustNone">Ninguno todavía. Importa el archivo .pub que te dio el autor por un canal de confianza.</p>
         <ul id="trustList"></ul>
-        <button class="g" id="importPub">Importar clave pública (.pub)</button>
+        <button class="g" id="importPub" title="Importa la clave pública (.pub) de un autor para marcar sus tarjetas como de confianza">Importar clave pública (.pub)</button>
         <input type="file" id="pubFile" accept=".pub,.json,application/json" hidden>
         <p class="err" id="trustErr" role="alert"></p>
       </section>
@@ -267,16 +270,16 @@
         <p class="note" id="sigNote" hidden></p>
         <div class="trustrow" id="trustRow" hidden>
           <label for="trustName">Nombre para este autor</label>
-          <div class="row"><input type="text" id="trustName" autocomplete="off" placeholder="El nombre con que conoces a esta persona o empresa" style="flex:1;min-width:200px"><button class="p" id="trustSave">Confiar en este autor</button></div>
+          <div class="row"><input type="text" id="trustName" autocomplete="off" placeholder="El nombre con que conoces a esta persona o empresa" style="flex:1;min-width:200px"><button class="p" id="trustSave" title="Guarda a este autor como de confianza con el nombre que escribiste">Confiar en este autor</button></div>
         </div>
-        <div class="trustrow" id="forceRow" hidden><button class="g" id="forceOpen">Abrir de todos modos</button></div>
+        <div class="trustrow" id="forceRow" hidden><button class="g" id="forceOpen" title="Muestra el contenido aunque la firma no sea válida. No lo uses si no conoces el origen">Abrir de todos modos</button></div>
       </section>
 
       <section id="lock" hidden>
         <h2>Esta tarjeta está cifrada</h2>
         <p class="desc">Escribe la contraseña que te dio quien la creó.</p>
         <label for="pw">Contraseña</label>
-        <div class="row"><input type="password" id="pw" autocomplete="off" style="flex:1;min-width:200px"><button class="p" id="unlock">Abrir</button></div>
+        <div class="row"><input type="password" id="pw" autocomplete="off" style="flex:1;min-width:200px"><button class="p" id="unlock" title="Descifra la tarjeta con la contraseña">Abrir</button></div>
       </section>
       <p class="err" id="err" role="alert"></p>
 
@@ -292,13 +295,13 @@
           <div class="vars-h"><h3>Variables</h3><span class="count" id="count"></span></div>
           <div class="vars" id="vars"></div>
         </div>
-        <div class="top-actions"><button class="p" id="copyAll">Copiar todo</button><span class="ok" id="copied" role="status"></span></div>
+        <div class="top-actions"><button class="p" id="copyAll" title="Copia el mensaje de sistema y el prompt, con las variables rellenas">Copiar todo</button><span class="ok" id="copied" role="status"></span></div>
         <div class="blk" id="sysBlk" hidden>
-          <div class="blk-h"><h3>Mensaje de sistema</h3><button class="g" id="copySys">Copiar sistema</button></div>
+          <div class="blk-h"><h3>Mensaje de sistema</h3><button class="g" id="copySys" title="Copia solo el mensaje de sistema">Copiar sistema</button></div>
           <pre id="sysOut"></pre>
         </div>
         <div class="blk">
-          <div class="blk-h"><h3>Prompt</h3><button class="g" id="copyPrompt">Copiar prompt</button></div>
+          <div class="blk-h"><h3>Prompt</h3><button class="g" id="copyPrompt" title="Copia solo el prompt, con las variables rellenas">Copiar prompt</button></div>
           <pre id="promptOut"></pre>
         </div>
       </section>
@@ -313,7 +316,7 @@
         <option value="all">Todas las firmas</option><option value="trusted">De autores de confianza</option>
         <option value="valid">Firma válida, autor desconocido</option><option value="none">Sin firma</option><option value="invalid">Firma no válida</option>
       </select>
-      <div class="row"><button class="p" id="addFiles">Añadir tarjetas</button><button class="g" id="addFolder">Añadir carpeta</button></div>
+      <div class="row"><button class="p" id="addFiles" title="Añade tarjetas PNG sueltas a la biblioteca">Añadir tarjetas</button><button class="g" id="addFolder" title="Añade todas las tarjetas PNG de una carpeta">Añadir carpeta</button></div>
     </div>
     <input type="file" id="libFiles" accept="image/*" multiple hidden>
     <input type="file" id="libFolder" webkitdirectory multiple hidden>
@@ -334,6 +337,8 @@
   </div>
   <footer class="foot"><span>Prompts Encapsulados 0.9.0 · formato v4 · beta sin auditoría externa</span><a href="https://github.com/oscar-rubalcava/prompts-encapsulados" target="_blank" rel="noopener noreferrer">Código, documentación y verificación de esta versión</a></footer>
 </div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script type="text/plain" id="licencia-fuentes">Copyright © 2017 IBM Corp. with Reserved Font Name "Plex"
 
@@ -681,6 +686,8 @@ if (typeof document !== "undefined") (() => {
   let header = null, payload = null, values = {}, objUrl = null, sig = null, forced = false;
   const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
   const setErr = m => { $("err").textContent = m || ""; };
+  let toastT = null;
+  function toast(msg){ const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2800); }
   const chipCss = h => `background:hsl(${Math.round(h * 360)}deg 70% 72%)`;
 
   /* ----- pestañas ----- */
@@ -700,7 +707,7 @@ if (typeof document !== "undefined") (() => {
     $("trustNone").hidden = ids.length > 0;
     ids.forEach(fp => {
       const li = document.createElement("li"); li.innerHTML = `<span>${esc(t[fp].name)}<small>${esc(fp)}</small></span>`;
-      const b = document.createElement("button"); b.className = "link"; b.textContent = "Quitar"; b.setAttribute("aria-label", "Quitar a " + t[fp].name);
+      const b = document.createElement("button"); b.className = "link"; b.textContent = "Quitar"; b.title = "Quita a este autor de tu lista de confianza"; b.setAttribute("aria-label", "Quitar a " + t[fp].name);
       b.onclick = () => { const n = loadTrusted(); delete n[fp]; saveTrusted(n); renderTrusted(); renderSig(); renderLib(); };
       li.append(b); ul.append(li);
     });
@@ -844,6 +851,7 @@ if (typeof document !== "undefined") (() => {
     catch { const t = document.createElement("textarea"); t.value = text; document.body.append(t); t.select(); document.execCommand("copy"); t.remove(); }
     const missing = findVars(fillVars(payload.system, values), fillVars(payload.prompt, values)).length;
     $("copied").textContent = `${label} copiado` + (missing ? ` (quedan ${missing} variables sin completar)` : "") + (removed ? ` · se quitaron ${removed} caracteres ocultos` : "");
+    toast(`${label} copiado ✓`);
   }
   const sys = () => fillVars(payload.system, values), pr = () => fillVars(payload.prompt, values);
   $("copyAll").onclick = () => copy(payload.system ? sys() + "\n\n---\n\n" + pr() : pr(), "Todo");
@@ -940,7 +948,7 @@ if (typeof document !== "undefined") (() => {
       b.setAttribute("aria-label", `${m.title || "Tarjeta privada"}. ${stTxt}. Abrir.`);
       b.onclick = () => { setView("open"); handleFile(e.file); };
       const w = document.createElement("div"); w.className = "cw";
-      const rm = document.createElement("button"); rm.type = "button"; rm.className = "link"; rm.textContent = "Quitar de la biblioteca";
+      const rm = document.createElement("button"); rm.type = "button"; rm.className = "link"; rm.textContent = "Quitar de la biblioteca"; rm.title = "Quita esta tarjeta de la biblioteca (no borra tu archivo)";
       rm.setAttribute("aria-label", "Quitar «" + (m.title || "Tarjeta privada") + "» de la biblioteca"); rm.onclick = () => removeEntry(e);
       w.append(b, rm); grid.append(w);
     });
@@ -1136,7 +1144,7 @@ if (typeof document !== "undefined") (() => {
   }
 
   /* ===================== CREAR: formulario e identidad ===================== */
-  let identity = null, unlocked = null, memIdentity = null, last = null, lastEmblem = null, varSpec = {}, varNames = "";
+  let identity = null, unlocked = null, memIdentity = null, last = null, lastEmblem = null, varSpec = {}, varNames = "", dirty = false, newArmed = false;
   const idGet = async () => { try { const db = await openDB(); return await new Promise((res, rej) => { const r = db.transaction("identity").objectStore("identity").get("main"); r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error); }); } catch { return memIdentity; } };
   const idSet = async v => { memIdentity = v; try { const db = await openDB(); await new Promise((res, rej) => { const tx = db.transaction("identity", "readwrite"); v ? tx.objectStore("identity").put(v, "main") : tx.objectStore("identity").delete("main"); tx.oncomplete = res; tx.onerror = tx.onabort = () => rej(tx.error); }); return true; } catch { return false; } };
   const download = (blob, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
@@ -1225,7 +1233,7 @@ if (typeof document !== "undefined") (() => {
       const blob = await encodePNG(img.rgba, img.width, img.height);
       const cid = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", stream))).slice(0, 8);
       const name = (f.hide ? "tarjeta-privada_" + cid : slugify(f.title) + "_v" + f.version) + "." + EXTENSION + ".png";
-      last = { blob, name, stream, title: f.hide ? "" : f.title, file: new File([blob], name, { type: "image/png" }) };
+      dirty = false; last = { blob, name, stream, title: f.hide ? "" : f.title, file: new File([blob], name, { type: "image/png" }) };
       if ($("resultImg").src.startsWith("blob:")) URL.revokeObjectURL($("resultImg").src);
       $("resultImg").src = URL.createObjectURL(blob); $("resultImg").hidden = false; $("resultHint").hidden = true; $("resultBox").classList.add("has");
       $("resultInfo").textContent = `${name} · ${fmtKB(blob.size)} · ${[f.sign ? "firmada" : "sin firma", f.enc ? "cifrada" : null, f.hide ? "privada" : null].filter(Boolean).join(", ")}. Verificada: se lee de vuelta idéntica.` + (f.enc && f.pw.length < 12 ? " Aviso: la contraseña es corta (menos de 12 caracteres); quien tenga el archivo puede probar contraseñas sin límite. Usa una frase larga." : "");
@@ -1240,13 +1248,34 @@ if (typeof document !== "undefined") (() => {
   $("rLib").onclick = async () => { if (last){ await addToLibrary([last.file]); $("resultInfo").textContent += " Añadida a la biblioteca."; } };
   (async () => { identity = await idGet(); if (identity && !identity.enc){ try { unlocked = await unlockIdentity(identity, null); } catch {} } renderIdentity(); refreshCats(); renderVars(); })();
 
+  /* ----- nueva tarjeta ----- */
+  ["cTitle", "cCategory", "cTags", "cPrompt", "cSystem", "cDesc", "cVersion", "cAuthor"].forEach(id => $(id).addEventListener("input", () => { dirty = true; }));
+  const NEW_LABEL = "Nueva tarjeta";
+  function clearForm(){
+    ["cTitle", "cCategory", "cTags", "cPrompt", "cSystem", "cDesc", "cAuthor", "cPw", "cPw2", "cIdPw"].forEach(id => { $(id).value = ""; }); $("cVersion").value = "1.0";
+    $("cEnc").checked = false; $("cHide").checked = false; $("cEncRow").hidden = true; setCErr(""); varSpec = {}; varNames = ""; renderVars(); renderReview();
+    if ($("resultImg").src.startsWith("blob:")) URL.revokeObjectURL($("resultImg").src);
+    $("resultImg").removeAttribute("src"); $("resultImg").hidden = true; $("resultHint").hidden = false; $("resultBox").classList.remove("has"); $("resultInfo").textContent = "";
+    $("resultBtns").hidden = true; $("shareTip").hidden = true; $("linkOut").hidden = true; last = null; lastEmblem = null; dirty = false; renderIdentity();
+    window.scrollTo({ top: 0, behavior: "auto" }); $("cTitle").focus();
+  }
+  function newCard(){
+    const texto = ["cTitle", "cPrompt", "cSystem"].some(id => $(id).value.trim());
+    if (dirty && texto && !newArmed){                         // hay algo escrito que no se ha convertido en tarjeta: pedir confirmación
+      newArmed = true; ["cNew", "rNew"].forEach(id => { $(id).textContent = "¿Borrar lo escrito? Pulsa otra vez"; });
+      setTimeout(() => { newArmed = false; ["cNew", "rNew"].forEach(id => { $(id).textContent = NEW_LABEL; }); }, 4000); return;
+    }
+    newArmed = false; ["cNew", "rNew"].forEach(id => { $(id).textContent = NEW_LABEL; }); clearForm(); toast("Formulario limpio: ya puedes crear otra tarjeta");
+  }
+  $("cNew").onclick = newCard; $("rNew").onclick = newCard;
+
   /* ----- enlaces ----- */
   const APP_URL = "https://oscar-rubalcava.github.io/prompts-encapsulados/app/";
   const linkOf = stream => (/^https?:$/.test(location.protocol) ? location.origin + location.pathname : APP_URL) + "#c=" + toB64url(stream);
   $("rLink").onclick = async () => {
     if (!last) return; const link = linkOf(last.stream), n = link.length.toLocaleString("en-US");
     if (link.length > MAX_LINK){ $("resultInfo").textContent = `Esta tarjeta es demasiado grande para un enlace (${n} caracteres; el máximo práctico es ${MAX_LINK.toLocaleString("en-US")}). Envíala como PNG y, por WhatsApp, como DOCUMENTO.`; return; }
-    try { await navigator.clipboard.writeText(link); $("linkOut").hidden = true; $("resultInfo").textContent = `Enlace copiado (${n} caracteres). Pégalo en WhatsApp, correo o donde quieras: quien lo abra verá la tarjeta y su firma. El contenido viaja dentro del enlace y no se sube a ningún servidor.`; }
+    try { await navigator.clipboard.writeText(link); toast("Enlace copiado ✓"); $("linkOut").hidden = true; $("resultInfo").textContent = `Enlace copiado (${n} caracteres). Pégalo en WhatsApp, correo o donde quieras: quien lo abra verá la tarjeta y su firma. El contenido viaja dentro del enlace y no se sube a ningún servidor.`; }
     catch { $("linkOut").value = link; $("linkOut").hidden = false; $("linkOut").focus(); $("linkOut").select(); $("resultInfo").textContent = `Tu navegador no dejó copiar solo. El enlace (${n} caracteres) está seleccionado abajo: cópialo con Cmd+C o Ctrl+C.`; }
   };
   /* ----- enviar: menú del dispositivo, WhatsApp o correo (con regla de tamaño: nunca se manda un enlace cortado) ----- */
@@ -1254,7 +1283,7 @@ if (typeof document !== "undefined") (() => {
   const info = m => { $("resultInfo").textContent = m; };
   const shareMsg = link => `Te comparto ${last.title ? "«" + last.title.slice(0, 80) + "»" : "una tarjeta privada"} de Prompts Encapsulados. Ábrela aquí (se verifica en tu navegador y no se sube a ningún servidor): ${link}`;
   const clickLink = (href, blank) => { const a = document.createElement("a"); a.href = href; if (blank){ a.target = "_blank"; a.rel = "noopener noreferrer"; } document.body.append(a); a.click(); a.remove(); };
-  const copyLink = async link => { try { await navigator.clipboard.writeText(link); return true; } catch { $("linkOut").value = link; $("linkOut").hidden = false; $("linkOut").select(); return false; } };
+  const copyLink = async link => { try { await navigator.clipboard.writeText(link); toast("Enlace copiado ✓"); return true; } catch { $("linkOut").value = link; $("linkOut").hidden = false; $("linkOut").select(); return false; } };
   const tooBig = link => info(`Esta tarjeta es demasiado grande para un enlace (${link.length.toLocaleString("en-US")} caracteres; el máximo práctico es ${MAX_LINK.toLocaleString("en-US")}). Envíala como PNG y, por WhatsApp, como DOCUMENTO.`);
   $("rShare").hidden = typeof navigator.share !== "function";
   $("rShare").onclick = async () => {
