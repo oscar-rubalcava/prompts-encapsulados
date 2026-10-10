@@ -14,7 +14,7 @@ icon = Image.open(ROOT / f"marca/{CFG['corto']}_icono_512.png").convert("RGBA").
 partes = CFG["nombre"].split(" ", 1)
 for i, t in enumerate(partes): d.text((72, 186 + 82 * i), t, font=F(84 if len(partes) == 2 else 96), fill=BLANCO)
 d.text((72, 376), "Prompts que se pueden verificar.", font=F(32, False), fill=BLANCO)
-d.text((72, 424), "Signed, encrypted prompt cards.", font=F(26, False), fill=MUTED)
+d.text((72, 424), "Signed prompt cards you can verify.", font=F(26, False), fill=MUTED)
 x = 72
 for t in ("Firma Ed25519", "Cifrado AES-256", "Formato abierto"):
     w = d.textlength(t, font=F(20)) + 32; d.rounded_rectangle([x, 488, x + w, 534], radius=23, outline=(74, 90, 110), width=2)

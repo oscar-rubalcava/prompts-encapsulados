@@ -5,7 +5,7 @@
 <h1 align="center">Prompts Encapsulados</h1>
 <p align="center"><i>Encapsulated Prompts</i></p>
 <p align="center"><b>Prompts you can verify.</b><br>
-Store a prompt in a PNG label: compressed, password-encrypted, signed by its author and easy to find in your library. No server, no account.</p>
+Create a PNG label with your prompt: compressed, optionally password-encrypted, signed by its author and easy to find in your library. No server, no account.</p>
 
 <p align="center">
   <a href="https://oscar-rubalcava.github.io/prompts-encapsulados/app/"><img alt="Live demo" src="https://img.shields.io/badge/demo-live-2ea44f"></a>

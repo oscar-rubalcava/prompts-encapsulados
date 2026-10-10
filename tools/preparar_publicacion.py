@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 CFG = json.loads((ROOT / "tools/nombre.json").read_text(encoding="utf-8"))
 URL = f"https://github.com/{CFG['usuario']}/{CFG['slug']}"
-DESCRIPCION = "Prompts que se pueden verificar: etiquetas PNG firmadas y cifradas, con biblioteca y decodificador sin servidor."
+DESCRIPCION = "Prompts que se pueden verificar: etiquetas PNG firmables y cifrables, con creador, biblioteca y decodificador sin servidor."
 TOPICS = ["prompt-engineering", "prompts", "llm", "ai-security", "prompt-injection", "digital-signature", "ed25519", "encryption", "privacy", "python", "open-format"]
 SKIP = {".git", "_site", "__pycache__", "node_modules"}
 errores, avisos = 0, 0

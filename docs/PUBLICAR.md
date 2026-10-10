@@ -18,12 +18,12 @@ git commit -m "Prompts Encapsulados 0.9.0: primera versión pública (beta)"
 
 ## 3. Crear el repositorio
 
-**Opción A: a mano.** En <https://github.com/new>: propietario = tu cuenta, nombre = `prompts-encapsulados`, **Public**, y **sin** README, sin .gitignore y sin licencia (ya los tienes). Descripción sugerida: `Prompts que se pueden verificar: etiquetas PNG firmadas y cifradas, con biblioteca y decodificador sin servidor.`
+**Opción A: a mano.** En <https://github.com/new>: propietario = tu cuenta, nombre = `prompts-encapsulados`, **Public**, y **sin** README, sin .gitignore y sin licencia (ya los tienes). Descripción sugerida: `Prompts que se pueden verificar: etiquetas PNG firmables y cifrables, con creador, biblioteca y decodificador sin servidor.`
 
 **Opción B: con la CLI de GitHub** (crea el repositorio y sube el código en un paso; salta al punto 6):
 ```bash
 gh repo create prompts-encapsulados --public --source=. --remote=origin --push \
-  --description "Prompts que se pueden verificar: etiquetas PNG firmadas y cifradas, con biblioteca y decodificador sin servidor."
+  --description "Prompts que se pueden verificar: etiquetas PNG firmables y cifrables, con creador, biblioteca y decodificador sin servidor."
 ```
 > Si usas la opción B, el primer push dispara los flujos antes de que actives Pages: el flujo «Sitio y demo» fallará esa vez. No pasa nada: actívalo (punto 4) y vuelve a ejecutarlo.
 

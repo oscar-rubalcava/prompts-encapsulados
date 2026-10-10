@@ -4,7 +4,7 @@
 
 <h1 align="center">Prompts Encapsulados</h1>
 <p align="center"><b>Prompts que se pueden verificar.</b><br>
-Guarda un prompt en una etiqueta PNG: comprimido, cifrado con contraseña, firmado por su autor y fácil de encontrar en tu biblioteca. Sin servidor y sin cuenta.</p>
+Crea una etiqueta PNG con tu prompt: comprimido, cifrable con contraseña, firmado por su autor y fácil de encontrar en tu biblioteca. Sin servidor y sin cuenta.</p>
 
 <p align="center">
   <a href="https://oscar-rubalcava.github.io/prompts-encapsulados/app/"><img alt="Demo en línea" src="https://img.shields.io/badge/demo-en%20l%C3%ADnea-2ea44f"></a>
