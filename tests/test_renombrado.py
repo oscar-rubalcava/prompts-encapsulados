@@ -68,7 +68,7 @@ try:
     r1 = py(b, "tools/build_html.py"); r2 = py(b, "tools/make_examples.py", "ejemplos")
     check("B regenerar decodificador y ejemplos", r1.returncode == 0 and r2.returncode == 0, r1.stderr + r2.stderr)
     src = (b / "zetaprueba.py").read_text(encoding="utf-8")
-    check("B firma de bytes e identificadores nuevos", 'b"ZETA"' in src and "zetaprueba-key" in src and f'{OLD["formato_id"]}-key' not in src)
+    check("B firma de bytes e identificadores nuevos", 'b"ZETA"' in src and "zetaprueba-key" in src and f'{OLD["formato_id"]}-key' not in src and '"format": "zetaprueba"' in src)
     html = (b / "zetaprueba.html").read_text(encoding="utf-8")
     check("B el decodificador reconoce la firma nueva", "[0x5A, 0x45, 0x54, 0x41]" in html and "zetaprueba-pub" in html)
     t2 = py(b, "tests/test_formato.py")

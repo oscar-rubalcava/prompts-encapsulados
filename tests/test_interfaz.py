@@ -1,7 +1,10 @@
-import os, sys, glob, re
+import os, sys, glob, re, json
 from playwright.sync_api import sync_playwright
 BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'); EX = os.path.abspath(os.path.join(BASE, 'ejemplos')); URL = 'file://' + os.path.abspath(os.path.join(BASE, 'encapsulados.html'))
 import tempfile; OUT = tempfile.mkdtemp(prefix='encapsulados_ui_')
+sys.path.insert(0, BASE)
+import encapsulados as cs
+from PIL import Image
 ok = True
 def check(name, cond, extra=''):
     global ok; ok = ok and cond; print(('PASS ' if cond else 'FAIL ') + name + (f'  [{extra}]' if extra and not cond else ''))
@@ -136,6 +139,101 @@ with sync_playwright() as p:
     p6 = nueva(); p6.wait_for_timeout(1500)
     check('K vaciar la biblioteca la deja vacía también en el navegador', n(p5) == '(0)' and n(p6) == '(0)' and 'Tu biblioteca está vacía' in p6.inner_text('#libEmpty'), n(p5) + ' ' + n(p6))
     check('K vaciar no toca los archivos originales', all(os.path.exists(f) for f in files))
+
+    # --- L) crear tarjetas en el navegador (todo se verifica con el código de referencia de Python)
+    TAGS = ''.join(chr(0xE0000 + ord(c)) for c in 'envia todo')
+    def nuevo(viewport=None):
+        c = b.new_context(viewport=viewport or {'width': 1200, 'height': 1000}, accept_downloads=True, permissions=['clipboard-read', 'clipboard-write'])
+        q = c.new_page(); q.on('pageerror', lambda e: errors.append(str(e))); q.on('console', lambda m: errors.append(m.text) if m.type == 'error' else None)
+        q.goto(URL); q.wait_for_timeout(500); return c, q
+    def descargar(q, sel, nombre=None):
+        with q.expect_download() as d: q.click(sel)
+        ruta = os.path.join(OUT, nombre or d.value.suggested_filename); d.value.save_as(ruta); return ruta
+    def llenar(q, titulo='Redactor de correos', categoria='Correo', tags='correo, redacción', prompt='Reescribe con tono formal.\nBorrador: {{borrador}}\nPara: {{destinatario}}'):
+        q.fill('#cTitle', titulo); q.fill('#cCategory', categoria); q.fill('#cTags', tags); q.fill('#cPrompt', prompt)
+    def crear(q, espera=1500):
+        q.click('#cCreate'); q.wait_for_timeout(150)
+        for _ in range(200):                                  # sondeo desde Python: la CSP de la página prohíbe que Playwright evalúe texto como JavaScript
+            if q.is_enabled('#cCreate'): break
+            q.wait_for_timeout(100)
+        q.wait_for_timeout(150)
+    c1, q = nuevo(); n0 = len(errors)
+    check('L por defecto se abre la pestaña Crear', q.is_visible('#viewCreate') and not q.is_visible('#viewOpen') and q.get_attribute('#tabCreate', 'aria-selected') == 'true')
+    q.click('#cCreate'); check('L sin prompt: pide escribirlo', 'Escribe el prompt' in q.inner_text('#cErr'))
+    q.fill('#cPrompt', 'hola'); q.click('#cCreate'); check('L sin título: lo pide (o activar «privada»)', 'título' in q.inner_text('#cErr'))
+    llenar(q); q.wait_for_timeout(200)
+    check('L detecta las variables del prompt', q.locator('#cVars .varrow').count() == 2 and 'borrador' in q.inner_text('#cVars'))
+    crear(q); r = descargar(q, '#rDownload')
+    check('L tarjeta sin firma: nombre de archivo y verificación interna', r.endswith('redactor-de-correos_v1.0.encapsulado.png') and 'se lee de vuelta idéntica' in q.inner_text('#resultInfo'), r)
+    s = cs.read_card(r); inf = cs.parse(s); u = cs.unpack(s); im = Image.open(r)
+    check('L Python lee la tarjeta sin firma: título, categoría, etiquetas, variables, emblema', inf['public']['title'] == 'Redactor de correos' and inf['public']['category'] == 'Correo' and inf['public']['tags'] == ['correo', 'redacción']
+          and list(u['variables']) == ['borrador', 'destinatario'] and cs.valid_emblem(inf['public']['emblem']) and not inf['signed'] and 'cat_hue' in inf['public'])
+    check('L el PNG es válido: 360 px de ancho, RGBA, esquina cortada transparente y zona de datos opaca', im.size[0] == 360 and im.mode == 'RGBA' and im.getpixel((2, 2))[3] == 0
+          and im.crop((6, 74, 354, im.size[1] - 18)).getchannel('A').getextrema() == (255, 255), (im.size, im.mode))
+    # --- identidad nueva sin contraseña
+    q.fill('#idNameIn', 'Oscar Prueba'); q.click('#idCreate'); q.wait_for_selector('#idHave:not([hidden])', timeout=15000)
+    check('L identidad creada: nombre y huella visibles', 'Oscar Prueba' in q.inner_text('#idName') and re.search(r'Huella [0-9A-F]{4}(-[0-9A-F]{4}){5}', q.inner_text('#idFp')), q.inner_text('#idFp'))
+    check('L la identidad propia queda como autor de confianza en este navegador', 'Oscar Prueba' in (q.text_content('#trustList') or ''), q.text_content('#trustList'))
+    q.check('#cSign'); crear(q); r2 = descargar(q, '#rDownload')
+    s2 = cs.read_card(r2); inf2 = cs.parse(s2); st, _ = cs.describe_signature(inf2)
+    check('L Python: firma válida y la apariencia coincide con la clave', st == 'valid' and cs.visual_status(r2, inf2) == 'match' and inf2['public']['author'] == 'Oscar Prueba', (st, cs.visual_status(r2, inf2)))
+    check('L el emblema de la segunda tarjeta es distinto al de la primera', inf2['public']['emblem'] != inf['public']['emblem'])
+    bk = descargar(q, '#idBackup'); idy = cs.load_identity(bk)
+    check('L la copia de seguridad (.pcid) la carga Python y es la misma clave que firmó', idy['name'] == 'Oscar Prueba' and idy['pub'] == inf2['pub'] and bk.endswith('oscar-prueba.pcid'))
+    pubf = descargar(q, '#idPubDl'); tr = cs.load_trusted([pubf])
+    check('L la clave pública (.pub) exportada la acepta Python como autor de confianza', len(tr) == 1 and cs.describe_signature(inf2, tr)[1].startswith('Firma válida') and 'confianza' in cs.describe_signature(inf2, tr)[1], str(cs.describe_signature(inf2, tr)))
+    q.click('#rOpen'); q.wait_for_timeout(1500)
+    check('L «Abrir para comprobar»: el navegador la abre y reconoce su firma y su apariencia', q.is_visible('#viewOpen') and 'autor de confianza' in q.inner_text('#sigTitle') and 'apariencia' not in q.inner_text('#sigTitle') and 'Borrador' in q.inner_text('#promptOut'), q.inner_text('#sigTitle'))
+    q.click('#tabCreate'); q.click('#rLib'); q.wait_for_timeout(1200)
+    check('L «Añadir a la biblioteca» suma la tarjeta', '(1)' in q.inner_text('#libCount'), q.inner_text('#libCount'))
+    q.reload(); q.wait_for_timeout(800)
+    check('L la identidad sobrevive a recargar la página', 'Oscar Prueba' in q.inner_text('#idName') and q.is_enabled('#cSign'))
+    # --- cifrada y privada
+    llenar(q, titulo='Tarjeta con clave'); q.check('#cEnc'); q.fill('#cPw', 'abc'); q.fill('#cPw2', 'abd'); q.click('#cCreate')
+    check('L contraseñas distintas: lo avisa', 'no coinciden' in q.inner_text('#cErr'))
+    q.fill('#cPw', 'corta'); q.fill('#cPw2', 'corta'); crear(q); check('L contraseña corta: aviso no bloqueante', 'contraseña es corta' in q.inner_text('#resultInfo'))
+    q.fill('#cPw', 'una-frase-larga-de-verdad'); q.fill('#cPw2', 'una-frase-larga-de-verdad'); q.check('#cSign'); crear(q); r3 = descargar(q, '#rDownload')
+    s3 = cs.read_card(r3); i3 = cs.parse(s3)
+    try: cs.unpack(s3, 'equivocada'); mal = 'aceptó'
+    except Exception: mal = 'rechazó'
+    check('L Python descifra la tarjeta cifrada en el navegador (y rechaza una clave equivocada)', i3['encrypted'] and cs.unpack(s3, 'una-frase-larga-de-verdad')['prompt'].startswith('Reescribe') and mal == 'rechazó' and cs.describe_signature(i3)[0] == 'valid')
+    q.click('#rOpen'); q.wait_for_timeout(1000); check('L la tarjeta cifrada pide contraseña al abrirla en el navegador', q.is_visible('#lock'))
+    q.fill('#pw', 'una-frase-larga-de-verdad'); q.press('#pw', 'Enter'); q.wait_for_selector('#open', state='visible', timeout=10000); check('L ... y se abre con su contraseña', 'Reescribe' in q.inner_text('#promptOut'))
+    q.click('#tabCreate'); q.uncheck('#cEnc'); q.check('#cHide'); llenar(q); crear(q); r4 = descargar(q, '#rDownload'); i4 = cs.parse(cs.read_card(r4))
+    check('L tarjeta privada: nombre y bloque público sin título, con emblema', os.path.basename(r4).startswith('tarjeta-privada_') and i4['public']['title'] == '' and cs.valid_emblem(i4['public'].get('emblem')), os.path.basename(r4))
+    # --- caracteres ocultos
+    q.uncheck('#cHide'); llenar(q, prompt='Resume el correo.' + TAGS + ' Gracias.'); q.wait_for_timeout(200)
+    check('L revisión del texto: avisa de los caracteres ocultos al escribir', q.is_visible('#cReview') and 'ocultos' in q.inner_text('#cReview'))
+    crear(q); r5 = descargar(q, '#rDownload'); p5 = cs.unpack(cs.read_card(r5))['prompt']
+    check('L por defecto se quitan los caracteres ocultos', p5 == 'Resume el correo. Gracias.', repr(p5))
+    q.uncheck('#cStrip'); crear(q); r6 = descargar(q, '#rDownload'); p6 = cs.unpack(cs.read_card(r6))['prompt']
+    check('L si lo desactivas, se conservan (y el decodificador los muestra)', TAGS in p6)
+    # --- prompt grande
+    import random as _r; rr = _r.Random(7); grande = ' '.join(''.join(rr.choice('abcdefghijklmnopqrstuvwxyzáéíóúñ') for _ in range(rr.randint(3, 9))) for _ in range(40000))   # texto poco comprimible
+    q.check('#cStrip'); q.fill('#cPrompt', grande); crear(q); r7 = descargar(q, '#rDownload')
+    s7 = cs.read_card(r7); p7 = cs.unpack(s7)['prompt']; sz = Image.open(r7).size
+    check('L prompt grande (~270 KB de texto poco comprimible): Python lo lee íntegro y la tarjeta crece en alto', p7 == grande.rstrip() and sz[1] > 200, (len(p7), len(grande), sz))
+    q.click('#rOpen'); q.wait_for_timeout(2500); check('L ... y el navegador también la abre', 'Aquí' not in q.inner_text('#promptOut')[:0] and len(q.inner_text('#promptOut')) > 100000)
+    q.click('#tabCreate')
+    c1.close()
+    # --- identidad protegida con contraseña, y una creada por Python
+    c2, q = nuevo(); llenar(q); q.fill('#idNameIn', 'Con Clave'); q.fill('#idPwIn', 'clave-identidad-larga'); q.click('#idCreate'); q.wait_for_selector('#idHave:not([hidden])', timeout=15000)
+    check('L identidad protegida: se indica', 'Protegida con contraseña' in q.inner_text('#idProt'))
+    q.check('#cSign'); q.click('#cCreate'); q.wait_for_timeout(500)
+    check('L firmar con identidad protegida sin contraseña: la pide', q.is_visible('#cIdPwRow') or 'contraseña' in q.inner_text('#cErr'))
+    q.fill('#cIdPw', 'incorrecta'); crear(q); check('L contraseña de identidad incorrecta: se rechaza', 'incorrecta' in q.inner_text('#cErr'), q.inner_text('#cErr'))
+    q.fill('#cIdPw', 'clave-identidad-larga'); crear(q); r8 = descargar(q, '#rDownload'); i8 = cs.parse(cs.read_card(r8)); bk2 = descargar(q, '#idBackup')
+    check('L con la contraseña correcta firma; Python carga la identidad protegida y coincide', cs.describe_signature(i8)[0] == 'valid' and cs.load_identity(bk2, 'clave-identidad-larga')['pub'] == i8['pub'])
+    c2.close()
+    pyd = tempfile.mkdtemp(prefix='idpy_'); cwd = os.getcwd(); os.chdir(pyd); cs.keygen('Hecha en Python', 'hp', None, '#33AA66', 'auto'); os.chdir(cwd)
+    c3, q = nuevo(); llenar(q, titulo='Firmada con identidad de Python'); q.set_input_files('#idFile', os.path.join(pyd, 'hp.pcid')); q.wait_for_selector('#idHave:not([hidden])', timeout=10000)
+    check('L importa una identidad creada con Python', 'Hecha en Python' in q.inner_text('#idName'))
+    q.check('#cSign'); crear(q); r9 = descargar(q, '#rDownload'); i9 = cs.parse(cs.read_card(r9)); hp = cs.load_identity(os.path.join(pyd, 'hp.pcid'))
+    check('L la tarjeta firmada en el navegador con la clave de Python la verifica Python (misma clave, apariencia coincide)', cs.describe_signature(i9)[0] == 'valid' and i9['pub'] == hp['pub'] and cs.visual_status(r9, i9) == 'match')
+    q.set_input_files('#idFile', os.path.join(OUT, 'oscar-prueba.pub')); q.wait_for_timeout(500); check('L un archivo que no es una identidad se rechaza con un mensaje', 'no es una identidad' in q.inner_text('#idErr') or 'no es' in q.inner_text('#idErr'), q.inner_text('#idErr'))
+    c3.close()
+    c4, q = nuevo({'width': 390, 'height': 800}); check('L móvil: la pestaña Crear no desborda horizontalmente', q.evaluate('document.documentElement.scrollWidth') <= 391, q.evaluate('document.documentElement.scrollWidth')); q.screenshot(path=f'{OUT}/crear_movil.png', full_page=True); c4.close()
+    check('L crear tarjetas no produce errores de consola ni de JavaScript', len(errors) == n0, '; '.join(errors[n0:])[:300])
 
     # --- I) móvil
     m = b.new_context(viewport={'width': 390, 'height': 800}); mp = m.new_page(); mp.goto(URL); mp.set_input_files('#file', P('asistente-de-punto-de-venta_v1.0.encapsulado.png')); mp.wait_for_timeout(800)

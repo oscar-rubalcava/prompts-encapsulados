@@ -84,3 +84,9 @@ Las etiquetas usan **IBM Plex Mono** (© IBM Corp., licencia SIL Open Font Licen
 - Tratar el texto como **no confiable**: mostrarlo, nunca ejecutarlo. Hacer visibles los caracteres ocultos (etiquetas Unicode U+E0000–E007F, ancho cero, controles bidireccionales U+202A–202E y U+2066–2069, guion blando) y quitarlos al copiar.
 - No hacer ninguna conexión de red al abrir una tarjeta.
 - **Coherencia visual (opcional):** la regla de huella dibujada debe corresponder a la clave firmante. Hay `n = floor((W − 12) / 6)` marcas; la marca `i` está en `x = 6 + 6·i`, mide 2 px de ancho y 3 px (bit 1) o 1 px (bit 0) de alto, terminando en la fila `y = 73`. El bit `i` es `(SHA-256(clave pública)[(i / 8) mod 32] >> (i mod 8)) & 1`. Se muestrea la fila `y = 72`: una marca alta difiere del fondo (píxel en `x + 3`) y una baja no. Si la línea base (`y = 73`) no se distingue del fondo, la comprobación no aplica.
+
+## 11. Implementaciones
+- **Python** (`encapsulados.py`): implementación de referencia. Crea, lee, verifica y descifra.
+- **JavaScript** (`encapsulados.html`): lee, verifica, descifra **y crea**. Dibuja la etiqueta en un canvas, pero escribe los bytes de datos directamente y codifica el PNG por sí misma.
+- Ambas son intercambiables: las pruebas (`tests/test_interfaz.py`, sección L) crean tarjetas e identidades en el navegador y las verifican con Python, y las de `tests/` abren con JavaScript lo que crea Python. Un lector nuevo debe superar esa misma prueba cruzada.
+- El dibujo decorativo de la etiqueta puede diferir unos píxeles entre implementaciones (medida del texto, suavizado de bordes); lo que no puede diferir es la zona de datos.

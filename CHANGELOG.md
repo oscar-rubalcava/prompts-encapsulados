@@ -5,6 +5,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 ## [0.9.0] - Primera versión pública (beta)
 
 ### Incluido
+- **Creador de tarjetas en el navegador** (pestaña Crear): escribes el prompt y obtienes el PNG, con firma Ed25519 y cifrado opcionales; identidad de firma guardada en el navegador y exportable como el mismo `.pcid` de la línea de comandos. Lo que crea el navegador lo abre y verifica Python, y al revés (pruebas cruzadas).
 - Formato de tarjeta v4: etiqueta PNG con bloque público firmado, payload comprimido y cifrado opcional (AES-256-GCM, PBKDF2 con 600 000 iteraciones) y firma Ed25519.
 - CLI: `keygen`, `encode`, `inspect`, `verify`, `decode`, `index`, `emblemas`, `release`, `verify-release`, `pem`.
 - Decodificador y biblioteca en un solo archivo (`encapsulados.html`): autores de confianza, aviso de suplantación, coherencia visual, revisión de riesgos del texto, guardado local opcional y total de KB.
@@ -16,6 +17,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). E
 
 ### Limitaciones conocidas
 - No ha sido auditado por terceros.
-- Las tarjetas se crean solo desde la línea de comandos.
+- El creador y el decodificador se han probado solo en Chromium; la firma Ed25519 del navegador exige una versión reciente.
+- La identidad de firma vive en el navegador: si se borran los datos del sitio, solo la copia de seguridad la recupera.
 - La revisión de riesgos es una heurística.
 - La interfaz y la documentación están en español.

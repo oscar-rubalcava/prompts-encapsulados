@@ -23,13 +23,17 @@ Los prompts circulan como texto suelto en chats y documentos. No sabes **quién*
 
 ## Pruébalo en 30 segundos
 
-1. Abre la **[demo en línea](https://oscar-rubalcava.github.io/prompts-encapsulados/app/)** (todo ocurre en tu navegador; no se sube nada).
-2. Descarga una tarjeta de [`ejemplos/`](ejemplos/) y arrástrala a la demo. La tarjeta cifrada usa la contraseña `demo1234`.
-3. Importa [`ejemplos/demo_appqia.pub`](ejemplos/demo_appqia.pub) y vuelve a abrirla: pasa de «autor desconocido» a «de confianza».
-4. Prueba `resumen-de-correos-ejemplo-con-riesgos` y `actualizacion-de-precios` para ver cómo detecta un prompt con texto oculto y una imitación.
+1. Abre la **[demo en línea](https://oscar-rubalcava.github.io/prompts-encapsulados/app/)**. Todo ocurre en tu navegador: no se sube nada.
+2. En la pestaña **Crear**, escribe un título y un prompt (lo que pongas entre `{{llaves dobles}}` será una variable) y pulsa **Crear tarjeta**. Obtienes un PNG que puedes descargar y enviar.
+3. Para firmarla, crea tu identidad (un nombre y un color; queda en tu navegador) y marca «Firmar con mi identidad». Descarga la copia de seguridad.
+4. Pulsa **Abrir para comprobar**: ves quién la firmó, rellenas las variables y copias el prompt.
+5. Para ver los casos difíciles, abre las tarjetas de [`ejemplos/`](ejemplos/): `resumen-de-correos-ejemplo-con-riesgos` (texto oculto) y `actualizacion-de-precios` (una imitación). La tarjeta cifrada usa la contraseña `demo1234`.
+
+<p align="center"><img src="assets/crear.png" alt="Pestaña Crear de Prompts Encapsulados" width="760"></p>
 
 ## Qué incluye
 
+- **Creador en el navegador:** escribes el prompt y obtienes la tarjeta PNG, con firma y cifrado opcionales; sin instalar nada y sin servidor.
 - **Firma Ed25519** sobre todo el contenido y los datos públicos; lista de autores de confianza y aviso si alguien se hace pasar por uno de ellos.
 - **Cifrado opcional** AES-256-GCM con PBKDF2-HMAC-SHA256 (600 000 iteraciones).
 - **Bloque público firmado** (título, categoría, etiquetas): la biblioteca indexa incluso las tarjetas cifradas sin contraseña.
@@ -45,9 +49,9 @@ Los prompts circulan como texto suelto en chats y documentos. No sabes **quién*
 ## Nombre
 El nombre oficial es **Prompts Encapsulados**; en el día a día, **Encapsulados** («te mando un encapsulado»). El comando es `encapsulados` y las tarjetas se guardan como `titulo_v1.0.encapsulado.png`.
 
-## Instalación y uso
+## Línea de comandos (opcional)
 
-Necesitas Python 3.10 o superior.
+Para automatizar o crear muchas tarjetas desde la terminal. Necesitas Python 3.10 o superior. Las tarjetas y las identidades que crea son las mismas que las del navegador y se abren entre sí.
 
 ```bash
 git clone https://github.com/oscar-rubalcava/prompts-encapsulados.git && cd prompts-encapsulados
@@ -56,19 +60,19 @@ pip install cryptography pillow
 # 1) tu identidad de firma (una vez). Guarda el .pcid en secreto; comparte el .pub
 python3 encapsulados.py keygen MiMarca --color "#FBB43F"
 
-# 2) crea una tarjeta
-python3 encapsulados.py encode ejemplo_prompt.json --sign mimarca.pcid --category Ventas -o mis_tarjetas/
+# 2) crea una tarjeta desde un .txt o un .json
+python3 encapsulados.py encode mi_prompt.txt --title "Mi prompt" --category Ventas --sign mimarca.pcid -o mis_tarjetas/
 #    añade --ask-password para cifrarla, o --hide-title para una tarjeta privada
 
 # 3) revísala y léela
-python3 encapsulados.py inspect mis_tarjetas/asistente-de-punto-de-venta_v1.0.encapsulado.png --trusted mimarca.pub
-python3 encapsulados.py decode  mis_tarjetas/asistente-de-punto-de-venta_v1.0.encapsulado.png --set nombre_negocio="Mi tienda"
+python3 encapsulados.py inspect mis_tarjetas/mi-prompt_v1.0.encapsulado.png --trusted mimarca.pub
+python3 encapsulados.py decode  mis_tarjetas/mi-prompt_v1.0.encapsulado.png
 
 # 4) tu biblioteca en la terminal (con el total de KB)
 python3 encapsulados.py index mis_tarjetas/ --trusted mimarca.pub
 ```
 
-Para abrir tarjetas con interfaz, abre `encapsulados.html` en el navegador (o usa la demo en línea). **Envía las tarjetas como documento**, no como foto: si una app las recomprime, se dañan.
+**Envía las tarjetas como documento**, no como foto: si una app las recomprime, se dañan. Para abrirlas con interfaz, usa la demo en línea o abre `encapsulados.html` en el navegador.
 
 ## Seguridad: lo que hace y lo que no
 
@@ -93,7 +97,8 @@ Modelo de amenazas completo: [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md). Para repo
 
 ## Hoja de ruta
 
-- [ ] Crear tarjetas desde el navegador (hoy la creación es por línea de comandos)
+- [ ] Probar el creador en más navegadores (hoy, solo Chromium) y con varias identidades
+- [ ] Crear una versión nueva a partir de una tarjeta existente
 - [ ] Cifrado por destinatario (clave pública), sin contraseña compartida
 - [ ] Caducidad y lista de revocación firmada
 - [ ] Lectores en otros lenguajes (JavaScript/Node, Rust, Go)

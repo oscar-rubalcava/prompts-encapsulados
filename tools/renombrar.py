@@ -54,7 +54,7 @@ def reglas(old, new, cambiar_formato=False):
         R.append((re.compile(rf"\b{re.escape(old['magic'])}\b"), lambda m: new["magic"]))
         R.append((re.compile(re.escape(hexbytes(old["magic"]))), lambda m: hexbytes(new["magic"])))
         f = re.escape(old["formato_id"])
-        for pat in (rf"\b{f}(?=-(?:key|pub|release)\b)", rf"\b{f}(?=\.(?:persist|trusted)\b)", rf'indexedDB\.open\("{f}"'):
+        for pat in (rf"\b{f}(?=-(?:key|pub|release)\b)", rf"\b{f}(?=\.(?:persist|trusted)\b)", rf'indexedDB\.open\("{f}"', rf'(?<="format": "){f}(?=")'):
             R.append((re.compile(pat), lambda m, o=old["formato_id"], n=new["formato_id"]: m.group(0).replace(o, n)))
     return R
 

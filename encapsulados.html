@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; font-src data:; script-src 'sha256-My3Z0KNkyiPi40mXXAMFD456/fPHsNJSJ1RH9kObQOs='; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src blob: data:; style-src 'unsafe-inline'; font-src data:; script-src 'sha256-vy6d/AUyO6AjPh1xhUqYR3dFB8KmMgzw9lxjp2XvY54='; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prompts Encapsulados</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20200%20200%22%20role%3D%22img%22%20aria-label%3D%22Prompts%20Encapsulados%3A%20prensa%20hidr%C3%A1ulica%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20rx%3D%2244%22%20fill%3D%22%2317202A%22%2F%3E%3Cg%20fill%3D%22%23E6EDF5%22%20transform%3D%22translate%280%2014.5%29%22%3E%3Crect%20x%3D%2244%22%20y%3D%22128%22%20width%3D%22112%22%20height%3D%2222%22%20rx%3D%223%22%2F%3E%3Cg%20transform%3D%22translate%280%200%29%22%3E%3Crect%20x%3D%2244%22%20y%3D%2269%22%20width%3D%22112%22%20height%3D%2213%22%20rx%3D%223%22%2F%3E%3Crect%20x%3D%2293%22%20y%3D%2247%22%20width%3D%2214%22%20height%3D%2222%22%2F%3E%3Crect%20x%3D%2280%22%20y%3D%2221%22%20width%3D%2240%22%20height%3D%2226%22%20rx%3D%223%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E">
@@ -123,6 +123,26 @@
   .safety.good{border-left-color:var(--good)} .safety.good .t{color:var(--good)}
   .sv-alta{background:var(--bad)} .sv-media{background:var(--warn)} .sv-baja{background:#93A1B1}
   mark.hid{background:#4A1D22;color:#FFB4AB;outline:1px solid var(--bad);font-size:12px;border-radius:3px;box-shadow:none}
+  /* crear */
+  textarea{width:100%;font:14px/1.6 var(--mono);padding:12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);resize:vertical;min-height:120px}
+  textarea:focus-visible{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
+  input[type=color]{width:100%;height:40px;padding:3px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer}
+  .f{margin:0 0 16px} .two{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:0 0 16px}
+  .f small,.hint2{display:block;color:var(--muted);font-size:13px;margin-top:5px}
+  details.opt{border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:0 0 16px;background:var(--panel)}
+  details.opt summary{font:700 13px var(--mono);cursor:pointer} details.opt[open] summary{margin-bottom:14px}
+  .chk{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font:600 14px var(--sans);cursor:pointer}
+  .chk input{width:18px;height:18px;margin-top:2px;accent-color:var(--ink);flex:none} .chk small{display:block;font-weight:400;color:var(--muted);margin-top:2px}
+  .varrow{display:grid;gap:8px;grid-template-columns:minmax(90px,.7fr) 1fr 1fr;align-items:center;margin:8px 0}
+  .varrow code{font:700 13px var(--mono);overflow-wrap:anywhere}
+  .resultbox{border:1px dashed #3B4A5B;background:var(--panel);border-radius:10px;padding:18px;text-align:center;color:var(--muted);font-size:14px;min-height:96px;display:grid;place-items:center}
+  .resultbox.has{border-style:solid;border-color:var(--line);padding:10px} .resultbox img{width:100%;border-radius:6px;display:block}
+  .result .row{margin-top:12px} .result .ok{margin:10px 0 0;overflow-wrap:anywhere}
+  .reviewbox{border:1px solid var(--line);border-left-width:5px;border-radius:8px;padding:10px 14px;margin:0 0 16px;font-size:14px;background:var(--panel)}
+  .reviewbox.bad{border-left-color:var(--bad)} .reviewbox.warn{border-left-color:var(--warn)} .reviewbox ul{margin:6px 0 0;padding-left:18px}
+  .warnl{color:var(--warn);font-size:13px;margin:8px 0 0} .fpl{font:12px var(--mono);margin:4px 0 0;overflow-wrap:anywhere}
+  .big{font-size:16px;padding:13px 22px}
+  @media (min-width:900px){#viewCreate .left{position:static}}              /* la columna es más alta que algunas pantallas: pegajosa dejaría partes inalcanzables */
   .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:space-between}
   .foot a{color:var(--ink)}
   [hidden]{display:none!important}
@@ -133,15 +153,76 @@
 <div class="wrap">
   <header>
     <div class="brand"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Prompts Encapsulados: prensa hidráulica"><rect width="200" height="200" rx="44" fill="#17202A"/><g fill="#E6EDF5" transform="translate(0 14.5)"><rect x="44" y="128" width="112" height="22" rx="3"/><g transform="translate(0 0)"><rect x="44" y="69" width="112" height="13" rx="3"/><rect x="93" y="47" width="14" height="22"/><rect x="80" y="21" width="40" height="26" rx="3"/></g></g></svg><b>Encapsulados</b></div>
-    <p>Abre una tarjeta, comprueba quién la firmó, rellena sus variables y cópiala.</p>
+    <p>Crea tarjetas de prompts, ábrelas, comprueba quién las firmó, rellena sus variables y cópialas.</p>
     <nav role="tablist" aria-label="Secciones">
-      <button role="tab" id="tabOpen" aria-selected="true">Abrir</button>
+      <button role="tab" id="tabCreate" aria-selected="true">Crear</button>
+      <button role="tab" id="tabOpen" aria-selected="false">Abrir</button>
       <button role="tab" id="tabLib" aria-selected="false">Biblioteca <span id="libCount">(0)</span></button>
     </nav>
   </header>
 
+  <!-- ===================== CREAR ===================== -->
+  <div id="viewCreate" class="grid">
+    <aside class="left">
+      <div class="result">
+        <div class="resultbox" id="resultBox"><p id="resultHint" style="margin:0">Aquí aparecerá tu tarjeta cuando pulses «Crear tarjeta».</p><img id="resultImg" alt="Tarjeta creada" hidden></div>
+        <p class="ok" id="resultInfo" role="status"></p>
+        <div class="row" id="resultBtns" hidden>
+          <button class="p" id="rDownload">Descargar PNG</button><button class="g" id="rOpen">Abrir para comprobar</button>
+          <button class="g" id="rLib">Añadir a la biblioteca</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button>
+        </div>
+      </div>
+      <section class="trust" id="idPanel" aria-labelledby="idH">
+        <h3 id="idH">Mi identidad de firma</h3>
+        <div id="idNew">
+          <p class="none">Firma tus tarjetas para que se pueda comprobar que son tuyas. Se crea una vez y se queda en este navegador.</p>
+          <div class="f"><label for="idNameIn">Tu nombre o el de tu empresa</label><input type="text" id="idNameIn" maxlength="60" autocomplete="off"></div>
+          <div class="two" style="margin-bottom:12px"><div><label for="idColor">Color</label><input type="color" id="idColor" value="#4f8cff"></div>
+            <div><label for="idMark">Sello</label><select id="idMark"><option value="q">Monograma Q</option><option value="auto">Emblema de mi clave</option></select></div></div>
+          <div class="f"><label for="idPwIn">Contraseña para protegerla (recomendado)</label><input type="password" id="idPwIn" autocomplete="new-password"><small>Sin contraseña, cualquiera que use este navegador podría firmar como tú.</small></div>
+          <div class="row"><button class="p" id="idCreate">Crear mi identidad</button><button class="g" id="idImport">Ya tengo una (.pcid)</button></div>
+          <input type="file" id="idFile" accept=".pcid,.json,application/json" hidden>
+        </div>
+        <div id="idHave" hidden>
+          <p class="stline" id="idName" style="margin:0;font:700 15px var(--mono)"></p><p class="fpl" id="idFp"></p><p class="none" id="idProt"></p>
+          <p class="warnl">Descarga tu copia de seguridad y guárdala fuera de carpetas públicas: si borras los datos del navegador o cambias de equipo, perderías la identidad.</p>
+          <div class="row" style="margin-top:10px"><button class="g" id="idBackup">Copia de seguridad (.pcid)</button><button class="g" id="idPubDl">Clave pública (.pub)</button><button class="link" id="idDel">Quitar de este navegador</button></div>
+        </div>
+        <p class="err" id="idErr" role="alert"></p>
+      </section>
+      <p class="privacy">Todo se hace en tu navegador. Tu prompt, tus contraseñas y tus claves no se envían a ningún servidor.</p>
+    </aside>
+    <main>
+      <h2>Crear una tarjeta</h2>
+      <p class="desc">Escribe tu prompt y conviértelo en una etiqueta PNG que puedes enviar, firmar y cifrar.</p>
+      <div class="f"><label for="cTitle">Título</label><input type="text" id="cTitle" maxlength="120" autocomplete="off" placeholder="Ej.: Redactor de correos formales"></div>
+      <div class="two">
+        <div><label for="cCategory">Categoría (opcional)</label><input type="text" id="cCategory" maxlength="40" list="catList" autocomplete="off" placeholder="Ej.: Correo"><datalist id="catList"></datalist></div>
+        <div><label for="cTags">Etiquetas (opcional)</label><input type="text" id="cTags" maxlength="120" autocomplete="off" placeholder="correo, redacción"></div>
+      </div>
+      <div class="f"><label for="cPrompt">Prompt</label><textarea id="cPrompt" rows="11" spellcheck="false" placeholder="Escribe o pega tu prompt. Lo que pongas entre llaves dobles, como &#123;&#123;nombre&#125;&#125;, será una variable que se rellena al abrir la tarjeta."></textarea></div>
+      <div class="reviewbox" id="cReview" hidden></div>
+      <div id="cVarsBox" hidden><div class="vars-h" style="margin-top:0"><h3>Variables detectadas</h3><span class="count">etiqueta y valor por defecto</span></div><div id="cVars"></div></div>
+      <details class="opt"><summary>Mensaje de sistema, descripción, versión y autor (opcionales)</summary>
+        <div class="f"><label for="cSystem">Mensaje de sistema</label><textarea id="cSystem" rows="4" spellcheck="false"></textarea></div>
+        <div class="f"><label for="cDesc">Descripción</label><input type="text" id="cDesc" maxlength="300" autocomplete="off"></div>
+        <div class="two"><div><label for="cVersion">Versión</label><input type="text" id="cVersion" value="1.0" maxlength="20" autocomplete="off"></div>
+          <div id="cAuthorRow"><label for="cAuthor">Autor (sin firma no se puede verificar)</label><input type="text" id="cAuthor" maxlength="60" autocomplete="off"></div></div>
+      </details>
+      <h3 style="margin:22px 0 6px">Seguridad</h3>
+      <label class="chk"><input type="checkbox" id="cSign"><span>Firmar con mi identidad<small id="cSignNote">Crea tu identidad a la izquierda para poder firmar.</small></span></label>
+      <div class="f" id="cIdPwRow" hidden><label for="cIdPw">Contraseña de tu identidad</label><input type="password" id="cIdPw" autocomplete="off"></div>
+      <label class="chk"><input type="checkbox" id="cEnc"><span>Cifrar con contraseña<small>El contenido solo se abre con la contraseña. El título y la categoría siguen visibles, salvo que actives «tarjeta privada».</small></span></label>
+      <div class="two" id="cEncRow" hidden><div><label for="cPw">Contraseña</label><input type="password" id="cPw" autocomplete="new-password"></div><div><label for="cPw2">Repite la contraseña</label><input type="password" id="cPw2" autocomplete="new-password"></div></div>
+      <label class="chk"><input type="checkbox" id="cHide"><span>Tarjeta privada<small>Sin título, categoría ni autor visibles en la imagen.</small></span></label>
+      <label class="chk"><input type="checkbox" id="cStrip" checked><span>Quitar caracteres ocultos del texto<small>Los que se cuelan al copiar de páginas web y que se pueden usar para esconder instrucciones.</small></span></label>
+      <p class="err" id="cErr" role="alert"></p>
+      <div class="top-actions"><button class="p big" id="cCreate">Crear tarjeta</button></div>
+    </main>
+  </div>
+
   <!-- ===================== ABRIR ===================== -->
-  <div id="viewOpen" class="grid">
+  <div id="viewOpen" class="grid" hidden>
     <aside class="left">
       <div class="drop" id="drop" tabindex="0" role="button" aria-label="Elegir o soltar una tarjeta PNG">
         <div class="hint"><strong>Suelta la tarjeta aquí</strong><span>o haz clic para elegir el archivo PNG</span></div>
@@ -467,6 +548,103 @@ async function visualStatus(rgba, width, h){
   }
   return "match";
 }
+/* ---- creación de tarjetas: el inverso de parseHeader/openCard (se prueba contra el codificador de Python) ---- */
+const FORMATO_ID = "encapsulados", EXTENSION = "encapsulado", FLAG_ENC = 1, FLAG_SIGNED = 2, PBKDF2_ITER = 600000;
+const concat = (...ps) => { const o = new Uint8Array(ps.reduce((s, p) => s + p.length, 0)); let k = 0; for (const p of ps){ o.set(p, k); k += p.length; } return o; };
+const u16 = n => Uint8Array.of((n >> 8) & 255, n & 255);
+const u32 = n => Uint8Array.of((n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255);
+const utf8 = s => new TextEncoder().encode(s);
+async function deflateRaw(bytes){
+  if (typeof CompressionStream === "undefined") throw new Error("Tu navegador es antiguo: no puede comprimir. Usa una versión reciente de Chrome, Edge, Firefox o Safari.");
+  return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer());
+}
+async function aesKey(password, salt, iters, usage){
+  const km = await crypto.subtle.importKey("raw", utf8(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: iters, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, [usage]);
+}
+// flujo = MAGIC | VERSION | FLAGS | [SALT NONCE ITER] | PUBLEN PÚBLICO | LEN PAYLOAD | [CLAVE_PÚBLICA FIRMA] | CRC32   (ver docs/FORMATO.md)
+async function packCard(payload, pub, password, signer){
+  const pubBytes = utf8(JSON.stringify(pub));
+  if (pubBytes.length > MAX_PUBLIC) throw new Error(`El bloque público (título, categoría, etiquetas) pesa ${pubBytes.length} bytes; el máximo es ${MAX_PUBLIC}.`);
+  let body = await deflateRaw(utf8(JSON.stringify(payload)));
+  let head = concat(Uint8Array.from(MAGIC), Uint8Array.of(SUPPORTED_VERSION, (password ? FLAG_ENC : 0) | (signer ? FLAG_SIGNED : 0)));
+  let salt, nonce;
+  if (password){ salt = crypto.getRandomValues(new Uint8Array(16)); nonce = crypto.getRandomValues(new Uint8Array(12)); head = concat(head, salt, nonce, u32(PBKDF2_ITER)); }
+  head = concat(head, u16(pubBytes.length), pubBytes, u32(body.length + (password ? 16 : 0)));
+  if (password) body = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce, additionalData: head }, await aesKey(password, salt, PBKDF2_ITER, "encrypt"), body));
+  let raw = concat(head, body);
+  if (signer) raw = concat(raw, signer.pub, new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, signer.key, raw)));
+  return concat(raw, u32(crc32(raw)));
+}
+function buildPublic({ title, category, version, author, tags, model, hide, emblem }){
+  const e = emblem ? { h: emblem.h, g: emblem.g } : null;
+  if (hide){ const p = { title: "", category: "", version: "", author: "", tags: [], model: "" }; if (e) p.emblem = e; return p; }
+  const p = { title, category, version, author, tags: tags || [], model: model || "" };
+  const ch = catHue({ category }); if (ch !== null) p.cat_hue = Math.round(ch * 1000) / 1000;
+  if (e) p.emblem = e; return p;
+}
+function buildPayload(prompt, system, description, variables){
+  return { format: FORMATO_ID, v: SUPPORTED_VERSION, description: description || "", system: system || "", prompt, variables: variables || {},
+           created: new Date().toISOString().replace(/\.\d{3}Z$/, "Z") };
+}
+function slugify(t){ return String(t || "").normalize("NFKD").replace(/[^\x00-\x7F]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "tarjeta"; }
+
+/* ---- emblema propio de cada tarjeta: forma (g) + tono (h); el más distinto de los que ya existen ---- */
+const validEmblem = e => !!e && typeof e === "object" && typeof e.h === "number" && e.h >= 0 && e.h <= 1 && typeof e.g === "string" && /^[0-6]{8}$/.test(e.g);
+function randomEmblem(hue){
+  let g; do { g = Array.from({ length: 8 }, () => Math.floor(Math.random() * 7)).join(""); } while ((g.match(/6/g) || []).length > 2);
+  return { h: Math.round((hue === undefined ? Math.random() : hue) * 1000) / 1000, g };
+}
+function emblemDistance(a, b){
+  let dh = Math.abs(a.h - b.h); dh = Math.min(dh, 1 - dh) * 2;
+  let ds = 0; for (let i = 0; i < 8; i++) if (a.g[i] !== b.g[i]) ds++;
+  return 0.65 * dh + 0.35 * ds / 8;
+}
+function chooseEmblem(existing, hue){
+  let best = null, bd = -1;
+  for (let i = 0; i < 300; i++){ const c = randomEmblem(hue), d = existing.reduce((m, e) => Math.min(m, emblemDistance(c, e)), 1); if (d > bd){ best = c; bd = d; } }
+  return best;
+}
+
+/* ---- identidad de firma (Ed25519): mismo archivo .pcid que crea el programa de Python ---- */
+const PKCS8_ED25519 = Uint8Array.of(0x30, 0x2e, 0x02, 0x01, 0x00, 0x30, 0x05, 0x06, 0x03, 0x2b, 0x65, 0x70, 0x04, 0x22, 0x04, 0x20);
+const fromB64url = s => { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+async function importSigner(seed){
+  const pk8 = concat(PKCS8_ED25519, seed);
+  const tmp = await crypto.subtle.importKey("pkcs8", pk8, { name: "Ed25519" }, true, ["sign"]);
+  const pub = fromB64url((await crypto.subtle.exportKey("jwk", tmp)).x);
+  return { key: await crypto.subtle.importKey("pkcs8", pk8, { name: "Ed25519" }, false, ["sign"]), pub };
+}
+async function newIdentity(name, color, mark, password){
+  const kp = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  const seed = new Uint8Array(await crypto.subtle.exportKey("pkcs8", kp.privateKey)).slice(-32);
+  const pub = new Uint8Array(await crypto.subtle.exportKey("raw", kp.publicKey));
+  const ident = { format: FORMATO_ID + "-key", v: 1, name, public: toHex(pub), brand: { color: color ? color.toUpperCase() : null, mark } };
+  if (password){
+    const salt = crypto.getRandomValues(new Uint8Array(16)), nonce = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce, additionalData: utf8(FORMATO_ID + "-key") }, await aesKey(password, salt, PBKDF2_ITER, "encrypt"), seed));
+    ident.enc = { salt: toHex(salt), nonce: toHex(nonce), iters: PBKDF2_ITER, ct: toHex(ct) };
+  } else ident.private = toHex(seed);
+  return ident;
+}
+function checkIdentity(i){
+  const ok = i && i.format === FORMATO_ID + "-key" && typeof i.name === "string" && /^[0-9a-f]{64}$/i.test(i.public || "") && (typeof i.private === "string" || (i.enc && typeof i.enc.ct === "string"));
+  if (!ok) throw new Error("Ese archivo no es una identidad de Prompts Encapsulados (.pcid).");
+  return i;
+}
+async function unlockIdentity(ident, password){
+  let seed;
+  if (ident.enc){
+    if (!password) throw new Error("Escribe la contraseña de tu identidad.");
+    if (!(ident.enc.iters >= 1 && ident.enc.iters <= MAX_ITER)) throw new Error("Parámetros de cifrado no válidos.");
+    try { seed = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: fromHex(ident.enc.nonce), additionalData: utf8(FORMATO_ID + "-key") }, await aesKey(password, fromHex(ident.enc.salt), ident.enc.iters, "decrypt"), fromHex(ident.enc.ct))); }
+    catch { throw new Error("Contraseña de la identidad incorrecta."); }
+  } else seed = fromHex(ident.private);
+  const s = await importSigner(seed);
+  if (toHex(s.pub) !== ident.public.toLowerCase()) throw new Error("La identidad está dañada (la clave pública no coincide).");
+  return s;
+}
+async function identityPub(i){ return { format: FORMATO_ID + "-pub", v: 1, name: i.name, public: i.public, fingerprint: await fingerprintOf(fromHex(i.public)), brand: i.brand }; }
 // ==CORE-END==
 
 /* ---------- interfaz ---------- */
@@ -480,12 +658,11 @@ if (typeof document !== "undefined") (() => {
 
   /* ----- pestañas ----- */
   function setView(v){
-    const lib = v === "lib";
-    $("viewOpen").hidden = lib; $("viewLib").hidden = !lib;
-    $("tabOpen").setAttribute("aria-selected", String(!lib)); $("tabLib").setAttribute("aria-selected", String(lib));
-    if (lib) renderLib();
+    for (const [k, id] of [["create", "viewCreate"], ["open", "viewOpen"], ["lib", "viewLib"]]) $(id).hidden = k !== v;
+    for (const [k, id] of [["create", "tabCreate"], ["open", "tabOpen"], ["lib", "tabLib"]]) $(id).setAttribute("aria-selected", String(k === v));
+    if (v === "lib") renderLib();
   }
-  $("tabOpen").onclick = () => setView("open"); $("tabLib").onclick = () => setView("lib");
+  $("tabCreate").onclick = () => setView("create"); $("tabOpen").onclick = () => setView("open"); $("tabLib").onclick = () => setView("lib");
 
   /* ----- autores de confianza ----- */
   const TKEY = "encapsulados.trusted.v1"; let memTrusted = {};
@@ -517,7 +694,7 @@ if (typeof document !== "undefined") (() => {
     $("empty").hidden = false; ["lock", "open", "meta", "sig", "safety"].forEach(i => $(i).hidden = true);
   }
   async function handleFile(file){
-    reset(); if (!file) return;
+    reset(); if (!file) return; setView("open");
     if (objUrl) URL.revokeObjectURL(objUrl);
     objUrl = URL.createObjectURL(file); img.src = objUrl; drop.classList.add("has");
     try {
@@ -729,7 +906,7 @@ if (typeof document !== "undefined") (() => {
   const PKEY = "encapsulados.persist"; let persist = false, persistOK = null;
   try { persist = localStorage.getItem(PKEY) === "1"; } catch {}
   let dbp = null;
-  const openDB = () => dbp || (dbp = new Promise((res, rej) => { const r = indexedDB.open("encapsulados", 1); r.onupgradeneeded = () => r.result.createObjectStore("cards", { keyPath: "key" }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
+  const openDB = () => dbp || (dbp = new Promise((res, rej) => { const r = indexedDB.open("encapsulados", 2); r.onupgradeneeded = () => { const db = r.result; if (!db.objectStoreNames.contains("cards")) db.createObjectStore("cards", { keyPath: "key" }); if (!db.objectStoreNames.contains("identity")) db.createObjectStore("identity"); }; r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }));
   const dbTx = async fn => { const db = await openDB(); return new Promise((res, rej) => { const tx = db.transaction("cards", "readwrite"); fn(tx.objectStore("cards")); tx.oncomplete = () => res(); tx.onerror = tx.onabort = () => rej(tx.error); }); };
   const dbPut = e => dbTx(st => st.put({ key: e.key, name: e.file.name, type: e.file.type || "image/png", lastModified: e.file.lastModified, blob: e.file }));
   const dbDel = key => dbTx(st => st.delete(key));
@@ -794,7 +971,232 @@ if (typeof document !== "undefined") (() => {
   vl.addEventListener("drop", e => { e.preventDefault(); addToLibrary(e.dataTransfer.files); });
   window.addEventListener("dragover", e => e.preventDefault());
   window.addEventListener("drop", e => e.preventDefault());
-  renderTrusted(); renderLib();
+  /* ===================== CREAR: dibujo de la etiqueta y PNG ===================== */
+  // Port del dibujo de render_card (tema oscuro). Solo lo decorativo se dibuja en el canvas: los bytes de la zona de datos
+  // se escriben DESPUÉS, tal cual, en el búfer de píxeles, y el PNG se codifica aquí mismo (no con canvas.toBlob), para que
+  // ninguna protección anti-huella del navegador pueda alterar los datos.
+  const INK = [23, 32, 42], NEUTRAL = [74, 90, 110], CUT = 22, MIN_ROWS = 10, CW = 360;
+  const css = c => `rgb(${c[0]},${c[1]},${c[2]})`;
+  const hsv = (h, s, v) => {
+    h = ((h % 1) + 1) % 1; const i = Math.floor(h * 6), f = h * 6 - i, p = v * (1 - s), q = v * (1 - f * s), t = v * (1 - (1 - f) * s);
+    const [r, g, b] = [[v, t, p], [q, v, p], [p, v, t], [p, q, v], [t, p, v], [v, p, q]][i % 6];
+    return [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+  };
+  const hexToRgb = h => { const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); return m ? [0, 2, 4].map(i => parseInt(m[1].slice(i, i + 2), 16)) : null; };
+  function mulberry32(a){ return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const MIRROR = { 0: 1, 1: 0, 2: 3, 3: 2, 4: 4, 5: 7, 6: 6, 7: 5 };
+  function cellShape(ctx, kind, x, y, t){
+    const q = (cx, cy, a0, a1) => { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, t, a0 * Math.PI / 180, a1 * Math.PI / 180); ctx.closePath(); ctx.fill(); };
+    if (kind === 0 || kind === 5) q(x, y, 0, 90);
+    if (kind === 1 || kind === 7) q(x + t, y, 90, 180);
+    if (kind === 2 || kind === 5) q(x + t, y + t, 180, 270);
+    if (kind === 3 || kind === 7) q(x, y + t, 270, 360);
+    if (kind === 4){ ctx.beginPath(); ctx.arc(x + t / 2, y + t / 2, t / 2 - 1.5 * t / 11, 0, 2 * Math.PI); ctx.fill(); }
+  }
+  function drawEmblem(ctx, x, y, size, cells, bg){          // 4x4 de cuartos de disco, simétrico
+    ctx.fillStyle = css(bg); ctx.fillRect(x, y, size, size);
+    const t = 11 * size / 72, off = (size - 4 * t) / 2; ctx.fillStyle = css(INK);
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++){
+      const k = +cells[r * 2 + c]; cellShape(ctx, k, x + off + c * t, y + off + r * t, t); cellShape(ctx, MIRROR[k], x + off + (3 - c) * t, y + off + r * t, t);
+    }
+  }
+  function drawQ(ctx, x, y, size, accent){                  // monograma Q: anillo con cola
+    const u = size / 72, c = size / 2, R = 19 * u, r = 10 * u;
+    ctx.fillStyle = css(accent); ctx.fillRect(x, y, size, size);
+    ctx.fillStyle = css(INK); ctx.beginPath(); ctx.arc(x + c, y + c, R, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = css(accent); ctx.beginPath(); ctx.arc(x + c, y + c, r, 0, 2 * Math.PI); ctx.fill();
+    const a = Math.PI / 4, w = 4.5 * u, x0 = x + c + (r - 2 * u) * Math.cos(a), y0 = y + c + (r - 2 * u) * Math.sin(a), x1 = x + c + (R + 5 * u) * Math.cos(a), y1 = y + c + (R + 5 * u) * Math.sin(a);
+    const dx = -Math.sin(a) * w, dy = Math.cos(a) * w; ctx.fillStyle = css(INK); ctx.beginPath();
+    ctx.moveTo(x0 + dx, y0 + dy); ctx.lineTo(x1 + dx, y1 + dy); ctx.lineTo(x1 - dx, y1 - dy); ctx.lineTo(x0 - dx, y0 - dy); ctx.closePath(); ctx.fill();
+  }
+  function rr(ctx, x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function shape(ctx, w, h, i){                             // silueta de etiqueta: esquina superior izquierda cortada
+    const r = 12 - i; ctx.beginPath(); ctx.moveTo(CUT, i); ctx.lineTo(w - 12, i); ctx.arcTo(w - i, i, w - i, 12, r); ctx.lineTo(w - i, h - 12);
+    ctx.arcTo(w - i, h - i, w - 12, h - i, r); ctx.lineTo(12, h - i); ctx.arcTo(i, h - i, i, h - 12, r); ctx.lineTo(i, CUT); ctx.closePath();
+  }
+  const ASC = 1.025;                                         // ascendente de IBM Plex Mono: PIL ancla el texto arriba, el canvas en la línea base
+  function drawText(ctx, str, x, y, size, bold, color){ ctx.font = `${bold ? 700 : 400} ${size}px "IBM Plex Mono", monospace`; ctx.fillStyle = css(color); ctx.textBaseline = "alphabetic"; ctx.fillText(str, x, y + Math.round(ASC * size)); }
+  function textW(ctx, str, size, bold){ ctx.font = `${bold ? 700 : 400} ${size}px "IBM Plex Mono", monospace`; return ctx.measureText(str).width; }
+  function fitText(ctx, text, size, bold, maxw){ if (textW(ctx, text, size, bold) <= maxw) return text; while (text && textW(ctx, text + "…", size, bold) > maxw) text = text.slice(0, -1); return text + "…"; }
+  function fitTitle(ctx, text, maxw){
+    if (textW(ctx, text, 22, true) <= maxw) return { lines: [text], size: 22, step: 22, subY: 46 };
+    for (const [size, step] of [[18, 22], [16, 20], [14, 18]]){
+      const words = text.split(/\s+/).filter(Boolean); let best = null;
+      for (let i = 1; i < words.length; i++){
+        const l1 = words.slice(0, i).join(" "), l2 = words.slice(i).join(" "), w1 = textW(ctx, l1, size, true), w2 = textW(ctx, l2, size, true);
+        if (w1 <= maxw && w2 <= maxw && (best === null || Math.max(w1, w2) < best.w)) best = { w: Math.max(w1, w2), lines: [l1, l2] };
+      }
+      if (best) return { lines: best.lines, size, step, subY: 52 };
+    }
+    const words = text.split(/\s+/).filter(Boolean); let l1 = "", i = 0;
+    while (i < words.length && textW(ctx, (l1 + " " + words[i]).trim(), 14, true) <= maxw){ l1 = (l1 + " " + words[i]).trim(); i++; }
+    return { lines: [l1 || fitText(ctx, text, 14, true, maxw), fitText(ctx, words.slice(i).join(" "), 14, true, maxw)], size: 14, step: 18, subY: 52 };
+  }
+  function miniMark(ctx, x, y, kind, accent, digest){          // sello del autor a 14 px (Q o emblema derivado de su clave)
+    const c = document.createElement("canvas"); c.width = c.height = 72; const g = c.getContext("2d");
+    if (kind === "q") drawQ(g, 0, 0, 72, accent); else drawEmblem(g, 0, 0, 72, Array.from({ length: 8 }, (_, i) => digest[1 + i] % 7).join(""), accent);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high"; ctx.drawImage(c, x, y, 14, 14);
+  }
+  async function renderCard(stream, brand){
+    await Promise.all([document.fonts.load('700 22px "IBM Plex Mono"'), document.fonts.load('400 11px "IBM Plex Mono"')]);
+    const info = parseHeader(stream), pub = info.meta, signed = info.signed;
+    const title = pub.title || "", hidden = !title, category = pub.category || "", version = pub.version || "", author = pub.author || "";
+    const px = Math.ceil(stream.length / 3), dw = CW - 2 * PADX, rows = Math.max(MIN_ROWS, Math.ceil(px / dw)), H = TOP + rows + BOT;
+    let digest, accent, mark = (brand && brand.mark) || "auto";
+    if (signed){ digest = new Uint8Array(await crypto.subtle.digest("SHA-256", info.pub)); accent = hexToRgb(brand && brand.color) || hsv(digest[0] / 255, .6, .95); }
+    else { digest = new Uint8Array(await crypto.subtle.digest("SHA-256", utf8(title))); mark = "auto"; accent = [140, 152, 166]; }
+    let emb = pub.emblem; if (!validEmblem(emb)) emb = { h: digest[0] / 255, g: Array.from({ length: 8 }, (_, i) => digest[1 + i] % 7).join("") };
+    const block = hsv(emb.h, .6, .95), pal = Array.from({ length: 5 }, (_, i) => hsv(emb.h + i * .035, .32, .22 + .045 * i));
+    const cv = document.createElement("canvas"); cv.width = CW; cv.height = H; const ctx = cv.getContext("2d", { willReadFrequently: true });
+    ctx.fillStyle = css(INK); ctx.fillRect(0, 0, CW, H);
+    const rnd = mulberry32(crc32(stream));                    // relleno decorativo de la zona de datos (no es parte del formato)
+    for (let ty = TOP; ty < TOP + rows; ty += 6) for (let tx = PADX; tx < CW - PADX; tx += 6){ ctx.fillStyle = css(pal[Math.floor(rnd() * 5)]); ctx.fillRect(tx, ty, Math.min(6, CW - PADX - tx), Math.min(6, TOP + rows - ty)); }
+    drawEmblem(ctx, 0, 0, 72, emb.g, block);
+    const x0 = 84, maxw = CW - 84 - 12, ft = fitTitle(ctx, hidden ? "Tarjeta privada" : title, maxw);
+    let y = ft.lines.length === 1 ? 12 : 5; for (const ln of ft.lines){ drawText(ctx, ln, x0, y, ft.size, true, [240, 244, 248]); y += ft.step; }
+    const hueC = catHue(pub), subY = ft.subY; let x = x0;
+    if (category){ const cw = textW(ctx, category, 10, true); ctx.fillStyle = css(hsv(hueC, .45, .95)); rr(ctx, x, subY, cw + 13, 18, 8); ctx.fill(); drawText(ctx, category, x + 6, subY + 3, 10, true, INK); x += cw + 12 + 8; }
+    const nIcons = (signed ? 1 : 0) + (info.encrypted ? 1 : 0), limit = CW - 12 - 24 * nIcons;
+    const verTxt = (version ? "v" + version : "") + (version && author ? "  ·" : "");
+    if (verTxt){ drawText(ctx, verTxt, x, subY + 2, 11, false, [170, 182, 196]); x += textW(ctx, verTxt, 11, false) + 8; }
+    if (author){
+      if (signed){ miniMark(ctx, Math.floor(x), subY + 2, mark, accent, digest); x += 14 + 6; }
+      drawText(ctx, fitText(ctx, author, 11, false, Math.max(limit - x, 20)), x, subY + 2, 11, false, [170, 182, 196]);
+    }
+    let rx = CW - 22;
+    if (signed){ ctx.strokeStyle = css(accent); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(rx, subY + 9, 7, 0, 2 * Math.PI); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(rx - 4, subY + 9); ctx.lineTo(rx - 1, subY + 12); ctx.lineTo(rx + 4, subY + 6); ctx.stroke(); rx -= 24; }
+    if (info.encrypted){ const lc = [240, 200, 110], ly = subY + 8; ctx.fillStyle = css(lc); rr(ctx, rx - 6, ly - 1, 12, 9, 2); ctx.fill(); ctx.strokeStyle = css(lc); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(rx, ly - 4, 4, Math.PI, 2 * Math.PI); ctx.stroke(); }
+    ctx.fillStyle = css(accent);                              // regla de huella: la comprueba visualStatus
+    for (let i = 0; i < Math.floor((CW - 2 * PADX) / 6); i++){ const hh = ((digest[(i >> 3) % 32] >> (i & 7)) & 1) ? 3 : 1; ctx.fillRect(PADX + 6 * i, TOP - hh, 2, hh); }
+    ctx.fillRect(PADX, TOP - 1, CW - 2 * PADX, 1);
+    let fcol = [150, 164, 180];
+    if (category){ ctx.fillStyle = css(hsv(hueC, .50, .40)); ctx.fillRect(0, H - BOT, CW, BOT); fcol = [238, 242, 246]; }
+    const cid = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", stream))).slice(0, 8).toUpperCase();
+    const status = [signed ? "firmada" : null, info.encrypted ? "cifrada" : null].filter(Boolean).join(" · ") || "sin firma";
+    drawText(ctx, `ID ${cid.slice(0, 4)}-${cid.slice(4)}  ·  ${status}`, PADX + 2, H - BOT + 4, 10, false, fcol);
+    const rt = stream.length.toLocaleString("en-US") + " bytes"; drawText(ctx, rt, CW - PADX - 2 - textW(ctx, rt, 10, false), H - BOT + 4, 10, false, fcol);
+    ctx.strokeStyle = css(NEUTRAL); ctx.lineWidth = 2; shape(ctx, CW, H, 0); ctx.stroke();     // hilo fino (la mitad exterior se recorta)
+    ctx.globalCompositeOperation = "destination-in"; ctx.fillStyle = "#000"; shape(ctx, CW, H, 0); ctx.fill(); ctx.globalCompositeOperation = "source-over";
+    const img = ctx.getImageData(0, 0, CW, H), d = img.data, pad = new Uint8Array(px * 3); pad.set(stream);
+    for (let yy = TOP; yy < TOP + rows; yy++) for (let xx = PADX; xx < CW - PADX; xx++) d[(yy * CW + xx) * 4 + 3] = 255;   // zona de datos siempre opaca
+    for (let i = 0; i < px; i++){ const o = ((TOP + Math.floor(i / dw)) * CW + PADX + (i % dw)) * 4; d[o] = pad[3 * i]; d[o + 1] = pad[3 * i + 1]; d[o + 2] = pad[3 * i + 2]; d[o + 3] = 255; }
+    return { rgba: d, width: CW, height: H };
+  }
+  async function zlibDeflate(bytes){ return new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate"))).arrayBuffer()); }
+  async function encodePNG(rgba, w, h){                      // PNG RGBA de 8 bits, sin filtros: independiente del canvas
+    const stride = w * 4, raw = new Uint8Array((stride + 1) * h);
+    for (let yy = 0; yy < h; yy++){ raw[yy * (stride + 1)] = 0; raw.set(rgba.subarray(yy * stride, (yy + 1) * stride), yy * (stride + 1) + 1); }
+    const chunk = (type, data) => { const t = utf8(type), body = concat(t, data); return concat(u32(data.length), body, u32(crc32(body))); };
+    return new Blob([Uint8Array.of(137, 80, 78, 71, 13, 10, 26, 10), chunk("IHDR", concat(u32(w), u32(h), Uint8Array.of(8, 6, 0, 0, 0))), chunk("IDAT", await zlibDeflate(raw)), chunk("IEND", new Uint8Array(0))], { type: "image/png" });
+  }
+
+  /* ===================== CREAR: formulario e identidad ===================== */
+  let identity = null, unlocked = null, memIdentity = null, last = null, lastEmblem = null, varSpec = {}, varNames = "";
+  const idGet = async () => { try { const db = await openDB(); return await new Promise((res, rej) => { const r = db.transaction("identity").objectStore("identity").get("main"); r.onsuccess = () => res(r.result || null); r.onerror = () => rej(r.error); }); } catch { return memIdentity; } };
+  const idSet = async v => { memIdentity = v; try { const db = await openDB(); await new Promise((res, rej) => { const tx = db.transaction("identity", "readwrite"); v ? tx.objectStore("identity").put(v, "main") : tx.objectStore("identity").delete("main"); tx.oncomplete = res; tx.onerror = tx.onabort = () => rej(tx.error); }); return true; } catch { return false; } };
+  const download = (blob, name) => { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
+  const jsonBlob = o => new Blob([JSON.stringify(o, null, 2)], { type: "application/json" });
+  const setIdErr = m => { $("idErr").textContent = m || ""; }, setCErr = m => { $("cErr").textContent = m || ""; };
+
+  async function trustSelf(ident){ const fp = await fingerprintOf(fromHex(ident.public)), t = loadTrusted(); t[fp] = { name: ident.name, pub: ident.public.toLowerCase() }; saveTrusted(t); renderTrusted(); }
+  function renderIdentity(){
+    const have = !!identity; $("idHave").hidden = !have; $("idNew").hidden = have;
+    if (have){ $("idName").textContent = identity.name; fingerprintOf(fromHex(identity.public)).then(fp => { $("idFp").textContent = "Huella " + fp; });
+      $("idProt").textContent = identity.enc ? "Protegida con contraseña." : "Sin contraseña: cualquiera que use este navegador puede firmar como tú."; }
+    const sign = $("cSign"); sign.disabled = !have; if (!have) sign.checked = false;
+    $("cSignNote").textContent = have ? "Se comprueba que la tarjeta es tuya y que nadie la modificó." : "Crea tu identidad a la izquierda para poder firmar.";
+    $("cIdPwRow").hidden = !(have && identity.enc && sign.checked && !unlocked); $("cAuthorRow").hidden = sign.checked;
+  }
+  $("cSign").onchange = renderIdentity;
+  $("cEnc").onchange = () => { $("cEncRow").hidden = !$("cEnc").checked; };
+  $("idCreate").onclick = async () => {
+    setIdErr(""); const name = $("idNameIn").value.trim(), pw = $("idPwIn").value;
+    if (!name) return setIdErr("Escribe tu nombre o el de tu empresa.");
+    $("idCreate").disabled = true; $("idCreate").textContent = "Creando…";
+    try {
+      const ident = await newIdentity(name, $("idColor").value, $("idMark").value, pw || null);
+      if (!(await idSet(ident))) setIdErr("Este navegador no permite guardar la identidad: dura solo mientras la página esté abierta. Descarga la copia de seguridad.");
+      identity = ident; unlocked = pw ? null : await unlockIdentity(ident, null); await trustSelf(ident); $("idPwIn").value = ""; renderIdentity();
+    } catch (e) { setIdErr(e && e.name === "NotSupportedError" ? "Tu navegador no soporta firmas Ed25519: actualízalo, o crea tarjetas sin firma." : (e.message || String(e))); }
+    $("idCreate").disabled = false; $("idCreate").textContent = "Crear mi identidad";
+  };
+  $("idImport").onclick = () => $("idFile").click();
+  $("idFile").onchange = async e => {
+    setIdErr(""); const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+    try { const ident = checkIdentity(JSON.parse(await f.text())); if (!ident.enc) unlocked = await unlockIdentity(ident, null); else unlocked = null;
+      await idSet(ident); identity = ident; await trustSelf(ident); renderIdentity(); }
+    catch (er) { setIdErr(er instanceof SyntaxError ? "Ese archivo no es una identidad válida." : er.message); }
+  };
+  $("idBackup").onclick = () => download(jsonBlob(identity), slugify(identity.name) + ".pcid");
+  $("idPubDl").onclick = async () => download(jsonBlob(await identityPub(identity)), slugify(identity.name) + ".pub");
+  let delArmed = false;
+  $("idDel").onclick = async () => {
+    if (!delArmed){ delArmed = true; $("idDel").textContent = "¿Seguro? Sin copia de seguridad se pierde"; setTimeout(() => { delArmed = false; $("idDel").textContent = "Quitar de este navegador"; }, 5000); return; }
+    delArmed = false; $("idDel").textContent = "Quitar de este navegador"; await idSet(null); identity = null; unlocked = null; renderIdentity();
+  };
+
+  function renderVars(){
+    const names = findVars($("cPrompt").value, $("cSystem").value), key = names.join("|"); if (key === varNames) return; varNames = key;
+    const next = {}; names.forEach(n => { next[n] = varSpec[n] || { label: n, default: "" }; }); varSpec = next;
+    const box = $("cVars"); box.innerHTML = ""; $("cVarsBox").hidden = !names.length;
+    names.forEach(n => {
+      const row = document.createElement("div"); row.className = "varrow"; row.innerHTML = `<code>{{${esc(n)}}}</code>`;
+      [["label", "Etiqueta", "Etiqueta de " + n], ["default", "Valor por defecto", "Valor por defecto de " + n]].forEach(([k, ph, al]) => {
+        const i = document.createElement("input"); i.type = "text"; i.placeholder = ph; i.setAttribute("aria-label", al); i.value = varSpec[n][k]; i.oninput = () => { varSpec[n][k] = i.value; }; row.append(i);
+      }); box.append(row);
+    });
+  }
+  function renderReview(){
+    const txt = $("cPrompt").value + "\n" + $("cSystem").value, f = scanText(txt), box = $("cReview");
+    box.hidden = !f.length; if (!f.length) return;
+    const mx = maxSeverity(f); box.className = "reviewbox " + (mx === "alta" ? "bad" : "warn");
+    box.innerHTML = `<b>Revisión de tu texto</b>` + ($("cStrip").checked && f.some(x => /ocultos/.test(x.msg)) ? ` <span class="count">(los caracteres ocultos se quitarán al crear)</span>` : "") + "<ul>" + f.map(x => `<li><b>${esc(x.sev)}</b>: ${esc(x.msg)}</li>`).join("") + "</ul>";
+  }
+  const cat = $("catList"); const refreshCats = () => { const s = new Set(["Ventas", "Atención", "Correo", "Análisis", "Marketing", "Código", "Educación"]); lib.forEach(e => e.h.meta.category && s.add(e.h.meta.category)); cat.innerHTML = [...s].map(c => `<option value="${esc(c)}">`).join(""); };
+  $("cPrompt").addEventListener("input", () => { renderVars(); renderReview(); }); $("cSystem").addEventListener("input", () => { renderVars(); renderReview(); }); $("cStrip").onchange = renderReview;
+
+  async function createCard(reroll){
+    setCErr(""); const btn = $("cCreate");
+    const strip = $("cStrip").checked, clean = s => strip ? stripHidden(s) : s;
+    const f = { title: clean($("cTitle").value).trim(), category: clean($("cCategory").value).trim(), tags: clean($("cTags").value).split(",").map(s => s.trim()).filter(Boolean),
+      prompt: clean($("cPrompt").value).replace(/\s+$/, ""), system: clean($("cSystem").value).replace(/\s+$/, ""), desc: clean($("cDesc").value).trim(),
+      version: $("cVersion").value.trim() || "1.0", hide: $("cHide").checked, sign: $("cSign").checked, enc: $("cEnc").checked, pw: $("cPw").value };
+    f.author = f.sign ? identity.name : clean($("cAuthor").value).trim();
+    if (!f.prompt) return setCErr("Escribe el prompt.");
+    if (!f.hide && !f.title) return setCErr("Escribe un título, o activa «Tarjeta privada».");
+    if (f.enc){ if (!f.pw) return setCErr("Escribe la contraseña para cifrar."); if (f.pw !== $("cPw2").value) return setCErr("Las dos contraseñas no coinciden."); }
+    const old = btn.textContent; btn.disabled = true; btn.textContent = "Creando…"; $("rReroll").disabled = true;
+    try {
+      let signer = null;
+      if (f.sign){ if (!unlocked) unlocked = await unlockIdentity(identity, $("cIdPw").value); signer = unlocked; }
+      const variables = {}; for (const n of findVars(f.prompt, f.system)) variables[n] = { label: (varSpec[n] && varSpec[n].label) || n, default: (varSpec[n] && varSpec[n].default) || "" };
+      const used = lib.map(e => e.h.meta.emblem).filter(validEmblem); if (reroll && lastEmblem) used.push(lastEmblem);
+      const emblem = chooseEmblem(used); lastEmblem = emblem;
+      const pub = buildPublic({ title: f.title, category: f.category, version: f.version, author: f.author, tags: f.tags, model: "", hide: f.hide, emblem });
+      const stream = await packCard(buildPayload(f.prompt, f.system, f.desc, variables), pub, f.enc ? f.pw : null, signer);
+      const img = await renderCard(stream, identity && f.sign ? identity.brand : null);
+      const back = rgbaToBytes(img.rgba, img.width, img.height);                       // comprobación: lo escrito en los píxeles se lee de vuelta idéntico
+      for (let i = 0; i < stream.length; i++) if (back[i] !== stream[i]) throw new Error("Error interno: los datos no se escribieron bien en la imagen. No uses esta tarjeta.");
+      const blob = await encodePNG(img.rgba, img.width, img.height);
+      const cid = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", stream))).slice(0, 8);
+      const name = (f.hide ? "tarjeta-privada_" + cid : slugify(f.title) + "_v" + f.version) + "." + EXTENSION + ".png";
+      last = { blob, name, file: new File([blob], name, { type: "image/png" }) };
+      if ($("resultImg").src.startsWith("blob:")) URL.revokeObjectURL($("resultImg").src);
+      $("resultImg").src = URL.createObjectURL(blob); $("resultImg").hidden = false; $("resultHint").hidden = true; $("resultBox").classList.add("has");
+      $("resultInfo").textContent = `${name} · ${fmtKB(blob.size)} · ${[f.sign ? "firmada" : "sin firma", f.enc ? "cifrada" : null, f.hide ? "privada" : null].filter(Boolean).join(", ")}. Verificada: se lee de vuelta idéntica.` + (f.enc && f.pw.length < 12 ? " Aviso: la contraseña es corta (menos de 12 caracteres); quien tenga el archivo puede probar contraseñas sin límite. Usa una frase larga." : "");
+      $("resultBtns").hidden = false; refreshCats();
+      $("resultBox").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block: "center" });   // el botón está abajo y el resultado arriba: llévalo a la vista
+    } catch (e) { setCErr(e && e.name === "NotSupportedError" ? "Tu navegador no soporta esta función (firmas Ed25519 o compresión). Actualízalo." : (e.message || String(e))); }
+    btn.disabled = false; btn.textContent = old; $("rReroll").disabled = false; renderIdentity();
+  }
+  $("cCreate").onclick = () => createCard(false); $("rReroll").onclick = () => createCard(true);
+  $("rDownload").onclick = () => last && download(last.blob, last.name);
+  $("rOpen").onclick = () => { if (last){ setView("open"); handleFile(last.file); } };
+  $("rLib").onclick = async () => { if (last){ await addToLibrary([last.file]); $("resultInfo").textContent += " Añadida a la biblioteca."; } };
+  (async () => { identity = await idGet(); if (identity && !identity.enc){ try { unlocked = await unlockIdentity(identity, null); } catch {} } renderIdentity(); refreshCats(); renderVars(); })();
+
+  renderTrusted(); renderLib(); setView("create");
 })();
 </script>
 </body>

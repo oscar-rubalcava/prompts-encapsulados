@@ -21,7 +21,7 @@ Es un proyecto personal: respondo lo antes posible y trato de hacerlo en una sem
 - Verificación de firmas, del bloque público y de la coherencia visual.
 - Cifrado, derivación de claves y manejo de contraseñas.
 - El lector de tarjetas (formato): desbordes, archivos malformados, comportamientos inesperados.
-- El decodificador y la biblioteca: XSS, salto de la política CSP, filtración de datos, almacenamiento local.
+- El decodificador, el creador y la biblioteca: XSS, salto de la política CSP, filtración de datos, almacenamiento local y manejo de la identidad de firma y de las contraseñas en el navegador.
 - Lanzamientos firmados (`release` y `verify-release`).
 - La revisión de riesgos, cuando una evasión sea trivial o rompa lo que la documentación promete.
 

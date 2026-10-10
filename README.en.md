@@ -24,13 +24,17 @@ Prompts travel as loose text in chats and documents. You cannot tell **who** mad
 
 ## Try it in 30 seconds
 
-1. Open the **[live demo](https://oscar-rubalcava.github.io/prompts-encapsulados/app/)** (everything runs in your browser; nothing is uploaded).
-2. Download a card from [`ejemplos/`](ejemplos/) and drag it into the demo. The encrypted card's password is `demo1234`.
-3. Import [`ejemplos/demo_appqia.pub`](ejemplos/demo_appqia.pub) and open it again: it goes from “unknown author” to “trusted”.
-4. Try `resumen-de-correos-ejemplo-con-riesgos` and `actualizacion-de-precios` to see it flag hidden text and an imitation.
+1. Open the **[live demo](https://oscar-rubalcava.github.io/prompts-encapsulados/app/)**. Everything runs in your browser: nothing is uploaded.
+2. In the **Crear** (Create) tab, type a title and a prompt (anything between `{{double braces}}` becomes a variable) and press **Crear tarjeta**. You get a PNG you can download and send.
+3. To sign it, create your identity (a name and a color; it stays in your browser) and tick “Firmar con mi identidad”. Download the backup.
+4. Press **Abrir para comprobar**: you see who signed it, fill in the variables and copy the prompt.
+5. For the hard cases, open the cards in [`ejemplos/`](ejemplos/): `resumen-de-correos-ejemplo-con-riesgos` (hidden text) and `actualizacion-de-precios` (an imitation). The encrypted card's password is `demo1234`.
+
+<p align="center"><img src="assets/crear.png" alt="Create tab of Prompts Encapsulados" width="760"></p>
 
 ## What is included
 
+- **Browser creator:** type the prompt and get the PNG card, with optional signature and encryption; nothing to install, no server.
 - **Ed25519 signature** over all content and public data; trusted-authors list and a warning when someone impersonates a trusted author.
 - **Optional encryption:** AES-256-GCM with PBKDF2-HMAC-SHA256 (600,000 iterations).
 - **Signed public block** (title, category, tags): the library indexes even encrypted cards without a password.
@@ -44,9 +48,9 @@ Prompts travel as loose text in chats and documents. You cannot tell **who** mad
 ## Name
 The official name is **Prompts Encapsulados** (Spanish for “encapsulated prompts”); the short name is **Encapsulados**. The command is `encapsulados` and cards are saved as `title_v1.0.encapsulado.png`.
 
-## Install and use
+## Command line (optional)
 
-Requires Python 3.10+.
+To automate or create many cards from the terminal. Requires Python 3.10+. The cards and identities it creates are the same as the browser's, and they open each other.
 
 ```bash
 git clone https://github.com/oscar-rubalcava/prompts-encapsulados.git && cd prompts-encapsulados
@@ -55,21 +59,19 @@ pip install cryptography pillow
 # 1) your signing identity (once). Keep the .pcid secret; share the .pub
 python3 encapsulados.py keygen MyBrand --color "#FBB43F"
 
-# 2) create a card
-python3 encapsulados.py encode ejemplo_prompt.json --sign mybrand.pcid --category Sales -o my_cards/
+# 2) create a card from a .txt or .json
+python3 encapsulados.py encode my_prompt.txt --title "My prompt" --category Sales --sign mybrand.pcid -o my_cards/
 #    add --ask-password to encrypt it, or --hide-title for a private card
 
 # 3) inspect and read it
-python3 encapsulados.py inspect my_cards/asistente-de-punto-de-venta_v1.0.encapsulado.png --trusted mybrand.pub
-python3 encapsulados.py decode  my_cards/asistente-de-punto-de-venta_v1.0.encapsulado.png --set nombre_negocio="My shop"
+python3 encapsulados.py inspect my_cards/my-prompt_v1.0.encapsulado.png --trusted mybrand.pub
+python3 encapsulados.py decode  my_cards/my-prompt_v1.0.encapsulado.png
 
 # 4) your library in the terminal (with total KB)
 python3 encapsulados.py index my_cards/ --trusted mybrand.pub
 ```
 
-To open cards with a UI, open `encapsulados.html` in your browser (or use the live demo). **Send cards as documents**, not as photos: messaging apps may recompress images and corrupt them.
-
-> The command-line interface and the documentation are currently in Spanish. Translations and English docs are welcome.
+**Send cards as documents**, not as photos: messaging apps may recompress images and corrupt them. The web interface and the documentation are in Spanish for now.
 
 ## Security: what it does and what it does not
 
@@ -82,7 +84,8 @@ Full threat model: [`docs/SEGURIDAD.md`](docs/SEGURIDAD.md) (Spanish). To report
 
 ## Roadmap
 
-- [ ] Create cards in the browser (today creation is command-line only)
+- [ ] Test the creator in more browsers (today, Chromium only) and with several identities
+- [ ] Create a new version from an existing card
 - [ ] Recipient-bound encryption (public key), no shared password
 - [ ] Expiry and a signed revocation list
 - [ ] Readers in other languages (JavaScript/Node, Rust, Go)
