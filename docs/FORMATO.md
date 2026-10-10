@@ -90,3 +90,10 @@ Las etiquetas usan **IBM Plex Mono** (© IBM Corp., licencia SIL Open Font Licen
 - **JavaScript** (`encapsulados.html`): lee, verifica, descifra **y crea**. Dibuja la etiqueta en un canvas, pero escribe los bytes de datos directamente y codifica el PNG por sí misma.
 - Ambas son intercambiables: las pruebas (`tests/test_interfaz.py`, sección L) crean tarjetas e identidades en el navegador y las verifican con Python, y las de `tests/` abren con JavaScript lo que crea Python. Un lector nuevo debe superar esa misma prueba cruzada.
 - El dibujo decorativo de la etiqueta puede diferir unos píxeles entre implementaciones (medida del texto, suavizado de bordes); lo que no puede diferir es la zona de datos.
+
+## 12. Enlaces
+Una tarjeta también puede viajar como **texto**: `<dirección del lector>#c=<flujo en base64url, sin relleno>`. El flujo es exactamente el de la sección 2 (el PNG no hace falta: el lector vuelve a dibujar la etiqueta). Un lector debe aceptar también el código solo, sin la dirección. El fragmento (`#…`) no lo envía el navegador al servidor.
+- **Límite práctico:** 60 000 caracteres (el máximo de un mensaje de WhatsApp es de unos 65 000).
+- El contenido es **no confiable**, igual que en un PNG: se verifica la firma y se revisa el texto antes de mostrarlo o copiarlo.
+- Un código cortado puede dejar un carácter suelto (largo ≡ 1 mod 4): el lector debe descartarlo y fallar con «incompleto», no con «no es una tarjeta».
+- **Por qué existe:** una app que convierte el PNG a JPEG (WhatsApp con las fotos) destruye los datos de los píxeles de forma irrecuperable; el texto viaja intacto.

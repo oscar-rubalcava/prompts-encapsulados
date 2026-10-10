@@ -45,6 +45,16 @@ Prompts travel as loose text in chats and documents. You cannot tell **who** mad
 - **Signed releases**, verifiable with just `openssl` ([guide, ES](docs/LANZAMIENTOS.md)).
 - **Open, documented format** ([spec, ES](docs/FORMATO.md)): write your own reader.
 
+## How to share a card
+
+| Channel | What to do |
+|---|---|
+| **WhatsApp, Telegram and chats** | Press **Copiar enlace** (Copy link) and paste it into the chat. The card travels inside the link, as text, safe from image conversions. Whoever opens it sees the card in the browser, with its signature. |
+| **Email, AirDrop, Drive** | Send the PNG as an attachment. |
+| **WhatsApp, sending the PNG** | Send it as a **Document**, never as a **Photo**. |
+
+**Why a photo breaks it:** the card's data lives in the pixels of a lossless PNG. If an app converts the image to JPEG (WhatsApp does this to photos), that data is destroyed and cannot be recovered. The decoder recognizes this and explains it, but that copy can no longer be opened: ask for another one as a link or a document. **Link limit:** about 44 KB of card (around 60,000 characters); larger ones go as PNG.
+
 ## Name
 The official name is **Prompts Encapsulados** (Spanish for “encapsulated prompts”); the short name is **Encapsulados**. The command is `encapsulados` and cards are saved as `title_v1.0.encapsulado.png`.
 

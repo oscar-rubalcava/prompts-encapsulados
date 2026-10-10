@@ -23,7 +23,7 @@ lic = (ROOT / "fonts/IBMPlexMono-OFL.txt").read_text(encoding="utf-8").replace("
 html = (HERE / f"{CFG['corto']}.template.html").read_text(encoding="utf-8")
 for k, v in (("{{FAVICON}}", urllib.parse.quote(icon, safe="")), ("{{FONT_REGULAR}}", b64("fonts/IBMPlexMono-Regular.ttf")),
              ("{{FONT_BOLD}}", b64("fonts/IBMPlexMono-Bold.ttf")), ("{{LOGO}}", icon), ("{{LICENSE}}", lic),
-             ("{{APP_VERSION}}", programa.__version__), ("{{REPO_URL}}", REPO_URL), ("{{NOMBRE}}", CFG["nombre"]), ("{{NOMBRE_CORTO}}", CFG["corto_visible"]),
+             ("{{APP_VERSION}}", programa.__version__), ("{{REPO_URL}}", REPO_URL), ("{{APP_URL}}", f"https://{CFG['usuario']}.github.io/{CFG['slug']}/app/"), ("{{NOMBRE}}", CFG["nombre"]), ("{{NOMBRE_CORTO}}", CFG["corto_visible"]),
              ("{{FORMATO_ID}}", CFG["formato_id"]), ("{{EXTENSION}}", CFG["extension"]), ("{{MAGIC}}", CFG["magic"]), ("{{MAGIC_BYTES}}", "[" + ", ".join(f"0x{ord(c):02X}" for c in CFG["magic"]) + "]")):
     assert k in html, f"falta el marcador {k} en la plantilla"
     html = html.replace(k, v)

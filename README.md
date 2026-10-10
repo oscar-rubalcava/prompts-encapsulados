@@ -46,6 +46,16 @@ Los prompts circulan como texto suelto en chats y documentos. No sabes **quién*
 
 <p align="center"><img src="assets/biblioteca.png" alt="Biblioteca de Prompts Encapsulados con doce tarjetas" width="760"></p>
 
+## Cómo compartir una tarjeta
+
+| Canal | Qué hacer |
+|---|---|
+| **WhatsApp, Telegram y chats** | Pulsa **Copiar enlace** y pégalo en el chat. La tarjeta viaja dentro del enlace, como texto, a salvo de las conversiones de imagen. Quien lo abra la ve en el navegador, con su firma. |
+| **Correo, AirDrop, Drive** | Envía el PNG como archivo adjunto. |
+| **WhatsApp, enviando el PNG** | Envíalo como **Documento**, nunca como **Foto**. |
+
+**Por qué una foto la rompe:** los datos de la tarjeta viven en los píxeles de un PNG sin pérdida. Si una app convierte la imagen a JPEG (WhatsApp lo hace con las fotos), esos datos se destruyen y no se pueden recuperar. El decodificador lo reconoce y te lo explica, pero esa copia ya no se puede abrir: hay que pedir otra por enlace o como documento. **Límite del enlace:** unos 44 KB de tarjeta (alrededor de 60 000 caracteres); las más grandes se envían como PNG.
+
 ## Nombre
 El nombre oficial es **Prompts Encapsulados**; en el día a día, **Encapsulados** («te mando un encapsulado»). El comando es `encapsulados` y las tarjetas se guardan como `titulo_v1.0.encapsulado.png`.
 

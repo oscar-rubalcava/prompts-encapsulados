@@ -142,6 +142,7 @@
   .reviewbox.bad{border-left-color:var(--bad)} .reviewbox.warn{border-left-color:var(--warn)} .reviewbox ul{margin:6px 0 0;padding-left:18px}
   .warnl{color:var(--warn);font-size:13px;margin:8px 0 0} .fpl{font:12px var(--mono);margin:4px 0 0;overflow-wrap:anywhere}
   .big{font-size:16px;padding:13px 22px}
+  .pastebox{margin-top:18px}
   @media (min-width:900px){#viewCreate .left{position:static}}              /* la columna es más alta que algunas pantallas: pegajosa dejaría partes inalcanzables */
   .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:space-between}
   .foot a{color:var(--ink)}
@@ -167,9 +168,11 @@
       <div class="result">
         <div class="resultbox" id="resultBox"><p id="resultHint" style="margin:0">Aquí aparecerá tu tarjeta cuando pulses «Crear tarjeta».</p><img id="resultImg" alt="Tarjeta creada" hidden></div>
         <p class="ok" id="resultInfo" role="status"></p>
+        <p class="hint2" id="shareTip" hidden>Por WhatsApp: usa «Copiar enlace», o envía el PNG como <b>Documento</b>, nunca como Foto: WhatsApp convierte las fotos a JPEG y la tarjeta deja de abrirse.</p>
+        <input type="text" id="linkOut" readonly hidden aria-label="Enlace de la tarjeta" style="margin-top:10px">
         <div class="row" id="resultBtns" hidden>
           <button class="p" id="rDownload">Descargar PNG</button><button class="g" id="rOpen">Abrir para comprobar</button>
-          <button class="g" id="rLib">Añadir a la biblioteca</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button>
+          <button class="g" id="rLib">Añadir a la biblioteca</button><button class="g" id="rLink" title="Copia un enlace que lleva la tarjeta dentro: se puede pegar en WhatsApp, correo o cualquier chat">Copiar enlace</button><button class="g" id="rReroll" title="Vuelve a crear la tarjeta con otro emblema y color">Otro emblema</button>
         </div>
       </div>
       <section class="trust" id="idPanel" aria-labelledby="idH">
@@ -229,7 +232,10 @@
         <img id="cardImg" alt="Tarjeta {{NOMBRE}} cargada">
         <div class="swap">Cambiar tarjeta</div>
       </div>
-      <input type="file" id="file" accept="image/png" hidden>
+      <input type="file" id="file" accept="image/*" hidden>
+      <div class="pastebox"><label for="codeIn">¿Te llegó un enlace o un código?</label>
+        <div class="row"><input type="text" id="codeIn" placeholder="Pega aquí el enlace o el código" autocomplete="off" style="flex:1;min-width:150px"><button class="g" id="codeOpen">Abrir</button></div>
+        <p class="err" id="codeErr" role="alert"></p></div>
       <dl class="meta" id="meta" hidden></dl>
 
       <section class="trust" aria-labelledby="trustH">
@@ -304,7 +310,7 @@
       </select>
       <div class="row"><button class="p" id="addFiles">Añadir tarjetas</button><button class="g" id="addFolder">Añadir carpeta</button></div>
     </div>
-    <input type="file" id="libFiles" accept="image/png" multiple hidden>
+    <input type="file" id="libFiles" accept="image/*" multiple hidden>
     <input type="file" id="libFolder" webkitdirectory multiple hidden>
     <div class="cats" id="cats" role="group" aria-label="Filtrar por categoría"></div>
     <div class="storage">
@@ -552,6 +558,22 @@ async function unlockIdentity(ident, password){
   return s;
 }
 async function identityPub(i){ return { format: FORMATO_ID + "-pub", v: 1, name: i.name, public: i.public, fingerprint: await fingerprintOf(fromHex(i.public)), brand: i.brand }; }
+/* ---- enlaces: la tarjeta viaja como texto (a salvo de las apps que convierten las fotos a JPEG) ---- */
+const MAX_LINK = 60000;                                    // WhatsApp admite unos 65 000 caracteres por mensaje
+const toB64url = b => { let s = ""; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); };
+function linkBytes(text){                                  // acepta un enlace con #c=… o solo el código; null si no hay nada que leer
+  const t = String(text || ""), m = /[#?&]c=([A-Za-z0-9_-]{16,})/.exec(t) || /^\s*([A-Za-z0-9_-]{40,})\s*$/.exec(t);
+  if (!m || m[1].length > 4000000) return null;
+  let c = m[1]; if (c.length % 4 === 1) c = c.slice(0, -1);     // un código cortado puede dejar un carácter suelto: se descarta y la lectura falla con «incompleto»
+  try { return fromB64url(c); } catch { return null; }
+}
+function sniffImage(b){
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47) return "png";
+  if (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) return "jpeg";
+  if (b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return "webp";
+  return "otro";
+}
+const JPEG_MSG = "Este archivo es un JPEG, no un PNG. Las tarjetas guardan sus datos en los píxeles de un PNG sin pérdida, y al convertirlas a JPEG esos datos se destruyen: casi seguro la enviaron por WhatsApp (u otra app) como FOTO. Pídele a quien la creó que la envíe como DOCUMENTO (o por correo o AirDrop), o que te mande el enlace de la tarjeta.";
 // ==CORE-END==
 
 /* ---------- interfaz ---------- */
@@ -588,6 +610,9 @@ if (typeof document !== "undefined") (() => {
 
   /* ----- lectura de una tarjeta ----- */
   async function fileToBytes(file){
+    const kind = sniffImage(new Uint8Array(await file.slice(0, 12).arrayBuffer()));
+    if (kind === "jpeg") throw new Error(JPEG_MSG);
+    if (kind !== "png") throw new Error("Este archivo no es un PNG. Las tarjetas son imágenes PNG sin pérdida.");
     let bmp;
     try { bmp = await createImageBitmap(file, { colorSpaceConversion: "none", premultiplyAlpha: "none" }); }
     catch { bmp = await createImageBitmap(file); }
@@ -610,6 +635,17 @@ if (typeof document !== "undefined") (() => {
       renderSig();
       if (sig.status === "invalid") return;
       await proceed();
+    } catch (e) { setErr(e.message); }
+  }
+  async function handleStream(stream){                   // abre una tarjeta que llegó como enlace o como código, no como imagen
+    reset(); setView("open"); if (objUrl){ URL.revokeObjectURL(objUrl); objUrl = null; }
+    try {
+      try { header = parseHeader(stream); } catch (e) { throw new Error("El enlace o el código no es una tarjeta válida, o llegó incompleto (¿se cortó al copiarlo?). " + e.message); }
+      $("empty").hidden = true;
+      sig = { status: await verifySignature(header), fp: header.signed ? await fingerprintOf(header.pub) : null, visual: "na" };
+      const r = await renderCard(stream, null), blob = await encodePNG(r.rgba, r.width, r.height);     // la etiqueta se vuelve a dibujar a partir de los datos
+      objUrl = URL.createObjectURL(blob); img.src = objUrl; drop.classList.add("has");
+      renderSig(); if (sig.status === "invalid") return; await proceed();
     } catch (e) { setErr(e.message); }
   }
   async function proceed(){
@@ -746,11 +782,13 @@ if (typeof document !== "undefined") (() => {
   drop.addEventListener("drop", e => { e.stopPropagation(); handleFile(e.dataTransfer.files[0]); });
 
   /* ================= biblioteca ================= */
-  const lib = []; let catFilter = "all", failed = 0;
+  const lib = []; let catFilter = "all", failed = 0, jpegs = 0;
   async function addToLibrary(files, fromStore){
-    failed = 0;
+    failed = 0; jpegs = 0;
     for (const f of Array.from(files)) {
-      if (!/\.png$/i.test(f.name) && f.type !== "image/png") continue;
+      const kind = sniffImage(new Uint8Array(await f.slice(0, 12).arrayBuffer()));
+      if (kind === "jpeg"){ jpegs++; continue; }
+      if (kind !== "png") continue;
       const key = f.name + "|" + f.size + "|" + f.lastModified;
       if (lib.some(e => e.key === key)) continue;
       try {
@@ -783,7 +821,8 @@ if (typeof document !== "undefined") (() => {
     }).sort((a, b) => String(a.h.meta.category || "").localeCompare(String(b.h.meta.category || ""), "es") || String(a.h.meta.title || "").localeCompare(String(b.h.meta.title || ""), "es"));
     const grid = $("libGrid"); grid.innerHTML = "";
     $("libEmpty").hidden = lib.length > 0;
-    $("libStatus").textContent = lib.length ? `Mostrando ${list.length} de ${lib.length} tarjetas.` + (failed ? ` ${failed} archivo(s) no eran tarjetas de {{NOMBRE}} y se omitieron.` : "") : (failed ? `${failed} archivo(s) no eran tarjetas de {{NOMBRE}}.` : "");
+    const jn = jpegs ? ` ${jpegs} archivo(s) JPEG se omitieron: las tarjetas se dañan al convertirse en JPEG (¿llegaron como foto por WhatsApp?). Pide que las envíen como documento.` : "";
+    $("libStatus").textContent = (lib.length ? `Mostrando ${list.length} de ${lib.length} tarjetas.` + (failed ? ` ${failed} archivo(s) no eran tarjetas de {{NOMBRE}} y se omitieron.` : "") : (failed ? `${failed} archivo(s) no eran tarjetas de {{NOMBRE}}.` : "")) + jn;
     list.forEach(e => {
       const m = e.h.meta, k = e.fp && t[e.fp], st = entryState(e), h = catHue(m);
       let stTxt, cls;
@@ -1088,11 +1127,11 @@ if (typeof document !== "undefined") (() => {
       const blob = await encodePNG(img.rgba, img.width, img.height);
       const cid = toHex(new Uint8Array(await crypto.subtle.digest("SHA-256", stream))).slice(0, 8);
       const name = (f.hide ? "tarjeta-privada_" + cid : slugify(f.title) + "_v" + f.version) + "." + EXTENSION + ".png";
-      last = { blob, name, file: new File([blob], name, { type: "image/png" }) };
+      last = { blob, name, stream, file: new File([blob], name, { type: "image/png" }) };
       if ($("resultImg").src.startsWith("blob:")) URL.revokeObjectURL($("resultImg").src);
       $("resultImg").src = URL.createObjectURL(blob); $("resultImg").hidden = false; $("resultHint").hidden = true; $("resultBox").classList.add("has");
       $("resultInfo").textContent = `${name} · ${fmtKB(blob.size)} · ${[f.sign ? "firmada" : "sin firma", f.enc ? "cifrada" : null, f.hide ? "privada" : null].filter(Boolean).join(", ")}. Verificada: se lee de vuelta idéntica.` + (f.enc && f.pw.length < 12 ? " Aviso: la contraseña es corta (menos de 12 caracteres); quien tenga el archivo puede probar contraseñas sin límite. Usa una frase larga." : "");
-      $("resultBtns").hidden = false; refreshCats();
+      $("resultBtns").hidden = false; $("shareTip").hidden = false; refreshCats();
       $("resultBox").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth", block: "center" });   // el botón está abajo y el resultado arriba: llévalo a la vista
     } catch (e) { setCErr(e && e.name === "NotSupportedError" ? "Tu navegador no soporta esta función (firmas Ed25519 o compresión). Actualízalo." : (e.message || String(e))); }
     btn.disabled = false; btn.textContent = old; $("rReroll").disabled = false; renderIdentity();
@@ -1103,7 +1142,24 @@ if (typeof document !== "undefined") (() => {
   $("rLib").onclick = async () => { if (last){ await addToLibrary([last.file]); $("resultInfo").textContent += " Añadida a la biblioteca."; } };
   (async () => { identity = await idGet(); if (identity && !identity.enc){ try { unlocked = await unlockIdentity(identity, null); } catch {} } renderIdentity(); refreshCats(); renderVars(); })();
 
-  renderTrusted(); renderLib(); setView("create");
+  /* ----- enlaces ----- */
+  const APP_URL = "{{APP_URL}}";
+  const linkOf = stream => (/^https?:$/.test(location.protocol) ? location.origin + location.pathname : APP_URL) + "#c=" + toB64url(stream);
+  $("rLink").onclick = async () => {
+    if (!last) return; const link = linkOf(last.stream), n = link.length.toLocaleString("en-US");
+    if (link.length > MAX_LINK){ $("resultInfo").textContent = `Esta tarjeta es demasiado grande para un enlace (${n} caracteres; el máximo práctico es ${MAX_LINK.toLocaleString("en-US")}). Envíala como PNG y, por WhatsApp, como DOCUMENTO.`; return; }
+    try { await navigator.clipboard.writeText(link); $("linkOut").hidden = true; $("resultInfo").textContent = `Enlace copiado (${n} caracteres). Pégalo en WhatsApp, correo o donde quieras: quien lo abra verá la tarjeta y su firma. El contenido viaja dentro del enlace y no se sube a ningún servidor.`; }
+    catch { $("linkOut").value = link; $("linkOut").hidden = false; $("linkOut").focus(); $("linkOut").select(); $("resultInfo").textContent = `Tu navegador no dejó copiar solo. El enlace (${n} caracteres) está seleccionado abajo: cópialo con Cmd+C o Ctrl+C.`; }
+  };
+  const openCode = () => {
+    $("codeErr").textContent = ""; const b = linkBytes($("codeIn").value);
+    if (!b){ $("codeErr").textContent = "No encuentro una tarjeta en ese texto. Pega el enlace completo (con «#c=…») o el código tal cual."; return; }
+    handleStream(b);
+  };
+  $("codeOpen").onclick = openCode; $("codeIn").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); openCode(); } });
+  const openFromHash = () => { if (/^#c=/.test(location.hash)){ const b = linkBytes(location.hash); if (b) handleStream(b); else { setView("open"); setErr("El enlace está incompleto o dañado."); } } };
+  window.addEventListener("hashchange", openFromHash);
+  renderTrusted(); renderLib(); setView("create"); openFromHash();
 })();
 </script>
 </body>
